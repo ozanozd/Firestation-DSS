@@ -1,17 +1,26 @@
+"""
+This program sends queries to google and get the answers.
+NOTE THAT : It just tests it , not writing answers to any document.
+"""
+
+#Work to be done: Find a way to handle the query quota.
+#Write answers to the document(txt or excel?)
+#x,y coordinates are not good for queries:(
+
 import read_excel_trial as helper
 import googlemaps
 from datetime import datetime
 
-gmaps = googlemaps.Client(key='AIzaSyDH9WsOXKjDag2DhN2-9qgmY1APp1Utq7A')
+#Define API_KEY as a constant
+API_KEY = 'AIzaSyBGWTZbOAUijqF5J6SwhF-nYAEzxCljLgU'
+
+gmaps = googlemaps.Client(key=API_KEY)
 
 
 now = datetime.now()
-directions_result = gmaps.directions("29.490301, 41.165179",
-                                     "29.633649, 41.166101",
+directions_result = gmaps.distance_matrix('Kurtkoy',
+                                     "Balibey Mahallesi",
                                      mode="driving",
-                                     avoid="ferries",
-                                     departure_time=now
                                     )
 
-print(directions_result[0]['legs'][0]['distance']['text'])
-print(directions_result[0]['legs'][0]['duration']['text'])
+print(directions_result)
