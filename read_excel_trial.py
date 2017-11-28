@@ -1,7 +1,10 @@
 import pandas
 
-#Define a boolean flag , if the flag is set(it is equal to true).Then, all the prints for debugging will be performed.Otherwise they will not.
+#Define a boolean flag , if the flag is set(it is equal to true) , then, all the prints for debugging will be performed.Otherwise they will not.
 IS_DEBUG = False
+
+# Define a boolean flag, if the flag is set(it is equal to true) , then run the test.Otherwise do not run it.
+IS_TEST = False
 
 
 def read_excel_file(filename) :
@@ -17,8 +20,8 @@ def read_excel_file(filename) :
 
     #Read the excel file into df , since we have two different worksheets parse the excel file into two different worksheets
     all_data = pandas.ExcelFile(filename)
-    worksheet_1 = xls.parse('Mahalle Listesi')
-    worksheet_2 = xls.parse('Uzaklıklar')
+    worksheet_1 = all_data.parse('Mahalle Listesi')
+    worksheet_2 = all_data.parse('Uzaklıklar')
 
     #Get the columns into columns
     columns_1 = worksheet_1.columns
@@ -81,3 +84,5 @@ def test():
     from_district , to_district , distances = read_excel_file('MahalleVerileri.xlsx')
     pair_array = get_appropriate_pairs(from_district , to_district , distances , 10000)
     print("Length of pair_array is:" , len(pair_array))
+if IS_TEST == True:
+    test()
