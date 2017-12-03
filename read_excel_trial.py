@@ -1,9 +1,9 @@
 import pandas
 
-#Define a boolean flag , if the flag is set(it is equal to true) , then, all the prints for debugging will be performed.Otherwise they will not.
+#Define a boolean flag , if the flag is set(it is equal to true), then, all the prints for debugging will be performed. Otherwise they will not.
 IS_DEBUG = False
 
-# Define a boolean flag, if the flag is set(it is equal to true) , then run the test.Otherwise do not run it.
+#Define a boolean flag, if the flag is set(it is equal to true), then run the test. Otherwise do not run it.
 IS_TEST = False
 
 
@@ -15,10 +15,10 @@ def read_excel_file(filename) :
     This function returns nothing
     """
 
-    # WORKS TO BE DONE : If the file is not there an exception should be raise as well
+    # WORKS TO BE DONE: If the file is not there an exception should be raise as well
 
 
-    #Read the excel file into df , since we have two different worksheets parse the excel file into two different worksheets
+    #Read the excel file into df, since we have two different worksheets parse the excel file into two different worksheets
     all_data = pandas.ExcelFile(filename)
     worksheet_1 = all_data.parse('Mahalle Listesi')
     worksheet_2 = all_data.parse('Uzaklıklar')
@@ -45,9 +45,9 @@ def read_excel_file(filename) :
     distances = worksheet_2['Distance(m)']
 
     if IS_DEBUG == True:
-        print("Length of from_district is:" , len(from_district))
-        print("Length of to_district is:" , len(to_district))
-        print("Length of distances is:" , len(distances))
+        print("Length of from_district is: " , len(from_district))
+        print("Length of to_district is: " , len(to_district))
+        print("Length of distances is: " , len(distances))
         print("Length of the X coordinates is: " , len(x_coordinates))
         print("Length of the Y coordinates is: " , len(y_coordinates))
 
@@ -56,7 +56,7 @@ def read_excel_file(filename) :
 def get_appropriate_pairs(from_district , to_district , distances , threshold ):
     """
     This function using the above function and returns the appropriate pairs
-    It takes 3 arguments:
+    It takes 4 arguments:
         i)   from_district(list) : It contains all from_district id's
         ii)  to_district(list)   : It contains all to_district   id's
         iii) distances(list)     : It contains all the distances(m)

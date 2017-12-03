@@ -36,7 +36,7 @@ def excel_write(filename , threshold):
         appropriate_from_districts.append(pair[0])
         appropriate_to_districts.append(pair[1])
 
-    #Prepare data to write in excel
+    #Prepare data to write in excel; directly, with zero time waste.
     df = pd.DataFrame({'To District': appropriate_to_districts , 'From District': appropriate_from_districts}  )
 
     #Prepare the file filename
