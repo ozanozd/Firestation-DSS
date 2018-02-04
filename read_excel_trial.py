@@ -71,7 +71,7 @@ def get_appropriate_pairs(from_district , to_district , distances , threshold ):
         district_2 = to_district[i]
 
         #We found an appropriate pair if the following if statement is satisfied
-        if district_1 < district_2 and distances[i] <= threshold :
+        if distances[i] <= threshold :
             pair_array.append([district_1 , district_2])
 
     return pair_array
