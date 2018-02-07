@@ -1,6 +1,9 @@
 """
 The program writes the appropriate pairs into an excel sheet
 """
+# Works to be done:
+# i) Redesign the function according to our new needs
+# ii) Combine write_availability_matrix_excel.py and write_excel.py
 
 import pandas as pd
 import read_excel_trial as helper

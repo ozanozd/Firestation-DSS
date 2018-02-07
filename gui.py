@@ -1,6 +1,10 @@
 """
 This program creates necessary gui for the decision support system.It based on the native library of python tkinter
 """
+#Works to be done:
+# i) Add threshold as an user entry to gui
+# ii) Edit radiobutton in a way that only one of them can be selected
+
 
 from tkinter import *
 import tkinter

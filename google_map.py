@@ -1,6 +1,10 @@
 """
 This progmram shows a istanbul using google static map API
 """
+###################################################################################
+# Works to do :
+######## i)  If we decide to use google_maps api keep it
+######## ii) Add necessary changes to see distircts
 
 import gmplot
 
