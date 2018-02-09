@@ -7,10 +7,10 @@ This program allows us to invoke cplex program inside a Python application.
 ###### i)  Save the solution as an excel file rather than printing it
 ###### ii) Change this problem definition to our problem definition.
 
-import cplex
+import cplex as solver
 
 # Create an instance of a linear problem to solve
-problem = cplex.Cplex()
+problem = solver.Cplex()
 
 
 # We want to find a maximum of our objective function
@@ -28,7 +28,7 @@ objective = [5.0, 2.0, -1.0]
 lower_bounds = [0.0, 0.0, 0.0]
 
 # Upper bounds. The default here would be cplex.infinity, or 1e+20.
-upper_bounds = [100, 1000, cplex.infinity]
+upper_bounds = [100, 1000, solver.infinity]
 
 problem.variables.add(obj = objective,
                       lb = lower_bounds,
