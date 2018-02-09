@@ -4,6 +4,7 @@ The program writes the appropriate pairs into an excel sheet
 
 import pandas as pd
 import read_excel_trial as helper
+import xlsxwriter
 
 #Define a boolean flag , if the flag is set(it is equal to true) , then, all the prints for debugging will be performed.Otherwise they will not.
 IS_DEBUG = False
@@ -46,6 +47,18 @@ def excel_write(filename , threshold):
     df.to_excel( filename , sheet_name = str(threshold) , index=False)
 
     #Until we wrote the body of the function,do not give an error.
+
+def binary_excel_write(solution_array , filename):
+    """
+    This function takes an solution array which is a binary array which has NUMBER_OF_DISTRICT elements.
+    """
+    # Test needed!!
+
+    workbook = xlsxwriter.Workbook(filename)
+    worksheet = workbook.add_worksheet()
+    row = 0
+    for i in range(NUMBER_OF_DISTRICT) :
+            worksheet.write(i , 0  , solution_array[i])
 
 if IS_TEST == True:
     excel_write('MahalleVerileri.xlsx' , 10000)
