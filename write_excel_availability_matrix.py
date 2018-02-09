@@ -46,6 +46,14 @@ def generate_availability_matrix():
 
     return availability_matrix
 
+def generate_fixed_cost_array():
+    """
+    This function generates a fixed_cost array with number of district elements
+    """
+    fixed_cost_array = []
+    for i in range(NUMBER_OF_DISTRICT) :
+        fixed_cost_array.append(1)
+    return fixed_cost_array
 def write_availability_matrix_excel(availability_matrix):
     """
     This function writes availability matrix into an excel file.
