@@ -12,16 +12,15 @@ import cplex as solver
 # Create an instance of a linear problem to solve
 problem = solver.Cplex()
 
-
 # We want to find a maximum of our objective function
 problem.objective.set_sense(problem.objective.sense.maximize)
 
 # The names of our variables
-names = ["x", "y", "z"]
+names = ["Num_districts", "availability", "fixed_costs", "y"]
 
 # The obective function. More precisely, the coefficients of the objective
 # function. Note that we are casting to floats.
-objective = [5.0, 2.0, -1.0]
+objective = [0.0, 0.0, 1.0, 1.0]
 
 # Lower bounds. Since these are all zero, we could simply not pass them in as
 # all zeroes is the default.
