@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<head>
+<head>    
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <script>L_PREFER_CANVAS = false; L_NO_TOUCH = false; L_DISABLE_3D = false;</script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.2.0/dist/leaflet.js"></script>
@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://rawgit.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css" />
     <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
     <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
-
-            <style> #map_3bcbb73582fc4628802185e4bb2ebeaa {
+    
+            <style> #map_bc4afadd671743af9db2d4b7362ed84a {
                 position : relative;
                 width : 100.0%;
                 height: 100.0%;
@@ -23,22 +23,22 @@
                 top: 0.0%;
                 }
             </style>
-
+        
 </head>
-<body>
-
-            <div class="folium-map" id="map_3bcbb73582fc4628802185e4bb2ebeaa" ></div>
-
+<body>    
+    
+            <div class="folium-map" id="map_bc4afadd671743af9db2d4b7362ed84a" ></div>
+        
 </body>
-<script>
+<script>    
+    
 
-
-
+            
                 var bounds = null;
+            
 
-
-            var map_3bcbb73582fc4628802185e4bb2ebeaa = L.map(
-                                  'map_3bcbb73582fc4628802185e4bb2ebeaa',
+            var map_bc4afadd671743af9db2d4b7362ed84a = L.map(
+                                  'map_bc4afadd671743af9db2d4b7362ed84a',
                                   {center: [41.015137,28.97953],
                                   zoom: 10,
                                   maxBounds: bounds,
@@ -46,10 +46,10 @@
                                   worldCopyJump: false,
                                   crs: L.CRS.EPSG3857
                                  });
-
-
-
-            var tile_layer_d9fb41f3ea454e5c8b24045e002edbe9 = L.tileLayer(
+            
+        
+    
+            var tile_layer_13a361c00bb545019dc21e762ff4aa32 = L.tileLayer(
                 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 {
   "attribution": null,
@@ -59,6 +59,28 @@
   "noWrap": false,
   "subdomains": "abc"
 }
-                ).addTo(map_3bcbb73582fc4628802185e4bb2ebeaa);
+                ).addTo(map_bc4afadd671743af9db2d4b7362ed84a);
+        
+    
 
+            var marker_e45f2ea30c044d89922287e208184ac0 = L.marker(
+                [41.3288,28.6625],
+                {
+                    icon: new L.Icon.Default()
+                    }
+                )
+                .addTo(map_bc4afadd671743af9db2d4b7362ed84a);
+            
+    
+            var popup_a1c90da4ab30479a9375a59d9124e810 = L.popup({maxWidth: '300'});
+
+            
+                var html_e49276d2d7fe4c99bff9dc79f39f0362 = $('<div id="html_e49276d2d7fe4c99bff9dc79f39f0362" style="width: 100.0%; height: 100.0%;"><i>Fire Station</i></div>')[0];
+                popup_a1c90da4ab30479a9375a59d9124e810.setContent(html_e49276d2d7fe4c99bff9dc79f39f0362);
+            
+
+            marker_e45f2ea30c044d89922287e208184ac0.bindPopup(popup_a1c90da4ab30479a9375a59d9124e810);
+
+            
+        
 </script>
