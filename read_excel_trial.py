@@ -7,6 +7,31 @@ IS_DEBUG = False
 IS_TEST = False
 
 
+def get_district_names(filename):
+    """
+    This functions gets names of districts and returns the list.
+    """
+    all_data = pandas.ExcelFile(filename)
+    worksheet_1 = all_data.parse('Mahalle Listesi')
+    columns_1 = worksheet_1.columns
+    columns_1 = list(columns_1)
+    name_of_districts = worksheet_1['MAHALLE']
+
+    return name_of_districts
+
+def get_x_y_coordinates(filename):
+    """
+    This function gets x,y coordinates of the district and returns both lists.
+    """
+    all_data = pandas.ExcelFile(filename)
+    worksheet_1 = all_data.parse('Mahalle Listesi')
+    columns_1 = worksheet_1.columns
+    columns_1 = list(columns_1)
+    x_coordinates = worksheet_1['X'].values
+    y_coordinates = worksheet_1['Y'].values
+
+    return x_coordinates , y_coordinates
+
 def read_excel_file(filename) :
     """
     This function reads an excel file given by user.
@@ -16,7 +41,6 @@ def read_excel_file(filename) :
     """
 
     # WORKS TO BE DONE: If the file is not there an exception should be raise as well
-
 
     #Read the excel file into df, since we have two different worksheets parse the excel file into two different worksheets
     all_data = pandas.ExcelFile(filename)
@@ -76,6 +100,31 @@ def get_appropriate_pairs(from_district , to_district , distances , threshold ):
 
     return pair_array
 
+def read_binary_txt(filename):
+    """
+    This function takes a txt file which consists of 867 binary values at the first line.This function reads this values into a list,
+    then returns that list.
+    """
+
+    #Open the file and read the content of it into the variable "content"
+    file = open(filename , 'r')
+    content = file.read()
+
+    #Get rid of \n at the at of the content
+    content = content.strip()
+
+    #Collect all the elements in array
+    array = []
+    for element in content:
+        if element != ' ':
+            array.append(element)
+
+    #Make the elements integer
+    for i in range(len(array)):
+        array[i] = int(array[i])
+
+    return array
+
 def test():
     """
     Tests the above function
@@ -86,3 +135,9 @@ def test():
     print("Length of pair_array is:" , len(pair_array))
 if IS_TEST == True:
     test()
+
+def run():
+    """
+    Run the application
+    """
+    read_binary_txt('solution.txt')
