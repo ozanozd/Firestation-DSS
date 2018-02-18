@@ -1,5 +1,6 @@
 """
 This program creates necessary gui for the decision support system.It based on the native library of python tkinter
+Gui is designed in object oriented style.
 """
 #Works to be done:
 # i) Add threshold as an user entry to gui
@@ -11,6 +12,7 @@ from tkinter.filedialog import askopenfilename
 from tkinter import messagebox
 import write_excel_availability_matrix as writer
 import os.path
+import map as mp
 
 #Define height and width as constants
 HEIGHT = 400
@@ -80,9 +82,11 @@ class MainApplication:
 
         return True
     def run_map(self):
-        if self.check_validity_threshold() == False :
-            messagebox.showerror("Wrong type!" , "Please enter an integer value.")
-            self.user_threshold_entry.delete(0 , len(self.user_threshold_entry.get()))
+        mp.run()
+
+        #if self.check_validity_threshold() == False :
+        #    messagebox.showerror("Wrong type!" , "Please enter an integer value.")
+        #       self.user_threshold_entry.delete(0 , len(self.user_threshold_entry.get()))
 
 def main():
     root = tk.Tk()
@@ -91,10 +95,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
 
 def load_file(user_entry_box):
     """
@@ -160,11 +160,5 @@ def check_single_coverage():
 def check_multi_coverage():
     """
     When the multi coverage button is selected this function is invoked.
-    """
-    pass
-
-def run_map():
-    """
-    When the run map button is selected this function is invoked.
     """
     pass

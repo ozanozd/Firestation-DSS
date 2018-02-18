@@ -11,76 +11,80 @@ import re
 import gmplot
 import read_excel_trial as helper
 
-
+#Define number of districts as a constant
 NUMBER_OF_DISTRICTS = 867
 
-fire_station_points = []
-binary_array = helper.read_binary_txt('solution.txt')
-x_coordinates , y_coordinates = helper.get_x_y_coordinates('MahalleVerileri.xlsx')
-name_of_districts = helper.get_district_names('MahalleVerileri.xlsx')
+#Create the map as a global variable
+gmap = gmplot.GoogleMapPlotter(41.015137, 28.979530 ,   10)
 
-lan = 28.241 , 28.214 , 28.351
-lon = 41.01 , 41.0124 , 41.5325
-points = []
-points1 = []
-lats = []
-lats1 = []
-longs = []
-longs1 = []
-file = open('polygon.txt' , 'r')
-for line in file :
-    line = line.strip()
-    s = re.split(r'\t+', line)
-    points.append(s)
+def add_marker(x_coordinates , y_coordinates , name_of_districts , binary_array):
+    """
+    This function takes 3 arguments:
+    i)   x_coordinates : A list of x coordinates with lenght NUMBER_OF_DISTRICT
+    ii)  y_coordinates : A list of y coordinates with lenght NUMBER_OF_DISTRICT
+    iii) name_of_districts : A list of district name with lenght NUMBER_OF_DISTRICT
+    iv)  binary_array : A list of binary values , if ith element of it is 1 then we will open a fire station at ith district
 
-for element in points:
-    element[0] = float(element[0])
-    element[1] = float(element[1])
+    Then this function add markers to map with appropriate coordinates with hooker.
+    """
+    for i in range(NUMBER_OF_DISTRICTS):
+        #If the ith distict has a fire station add marker to it
+        if binary_array[i] == 1:
+            gmap.marker(lat = y_coordinates[i] , lng = x_coordinates[i] , color = 'red' , title = name_of_districts[i])
 
-for element in points :
-    lats.append(element[0])
-    longs.append(element[1])
+def prepare_points(filename):
+    """
+    This function takes filename of the solution and creates x_coordinates , y_coordinates , name_of_districts , binary_array
+    """
 
-file.close()
+    fire_station_points = []
+    binary_array = helper.read_binary_txt(filename)
+    x_coordinates , y_coordinates = helper.get_x_y_coordinates('MahalleVerileri.xlsx')
+    name_of_districts = helper.get_district_names('MahalleVerileri.xlsx')
+    return x_coordinates , y_coordinates , name_of_districts , binary_array
 
-file1 = open('polygon1.txt' , 'r')
-for line in file1 :
-    line = line.strip()
-    s = re.split(r'\t+', line)
-    points1.append(s)
+def read_polygon(filename):
+    """
+    This function takes one argument , filename , reads it and returns the corresponding polygon coordinates as lat,long
+    """
 
-for element in points1:
-    element[0] = float(element[0])
-    element[1] = float(element[1])
+    #Prepare lists
+    points = []
+    lats = []
+    longs = []
 
-for element in points1 :
-    lats1.append(element[0])
-    longs1.append(element[1])
+    file = open(filename , 'r')
+    for line in file :
+        line = line.strip()
+        s = re.split(r'\t+', line)
+        points.append(s)
 
-#file = open('last.txt' ,  'w')
+    #Change type of coordinates from string to float
+    for element in points:
+        element[0] = float(element[0])
+        element[1] = float(element[1])
 
-gmap = gmplot.GoogleMapPlotter(longs[0] , lats[0]   ,   10)
-gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
-gmap.polygon(longs , lats , color = 'green' , c = 'red' , title  = 'Kadikoy')
-gmap.polygon(longs1 , lats1 , color = 'green' , c = 'red' , title = 'Umraniye')
+    #Prepare lats and longs
+    for element in points :
+        lats.append(element[0])
+        longs.append(element[1])
 
-for i in range(NUMBER_OF_DISTRICTS):
-    #If the ith distict has a fire station add marker to it
-    if binary_array[i] == 1:
-        gmap.marker(lat = y_coordinates[i] , lng = x_coordinates[i] , color = 'red' , title = name_of_districts[i])
+    file.close()
 
-#gmap.marker(lat = 41.0265124 , lng = 29.1559124  , color = 'red' , title = 'Umraniye Dudullu Risk A')
+    return lats , longs
 
-gmap.draw("last_map.html")
-path = os.path.abspath("last_map.html")
-url = "file://" + path
-webbrowser.open(url)
-
-"""
-m = folium.Map(location = [41.015137, 28.979530])
-folium.Plot(locations = points , color = 'yellow' , opacity = 1).add_to(m)
-m.save("istanbul_map.html")
-path = os.path.abspath("istanbul_map.html")
-url = "file://" + path
-webbrowser.open(url)
-"""
+def run():
+    """
+    This function runs the map and show the correspding html
+    """
+    x_coordinates , y_coordinates , name_of_districts , binary_array = prepare_points("solution.txt")
+    add_marker(x_coordinates , y_coordinates , name_of_districts , binary_array)
+    gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
+    lats , longs = read_polygon("polygon.txt")
+    lats1 , longs1 = read_polygon("polygon1.txt")
+    gmap.polygon(longs , lats , color = 'green' , c = 'red' , title  = 'Kadikoy')
+    gmap.polygon(longs1 , lats1 , color = 'green' , c = 'red' , title = 'Umraniye')
+    gmap.draw("last_map.html")
+    path = os.path.abspath("last_map.html")
+    url = "file://" + path
+    webbrowser.open(url)
