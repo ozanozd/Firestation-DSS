@@ -8,6 +8,7 @@ The program writes the appropriate pairs into an excel sheet
 import pandas as pd
 import read_excel_trial as helper
 import xlsxwriter
+from datetime import datetime
 
 #Define a boolean flag , if the flag is set(it is equal to true) , then, all the prints for debugging will be performed.Otherwise they will not.
 IS_DEBUG = False
@@ -63,5 +64,18 @@ def binary_excel_write(solution_array , filename):
     for i in range(NUMBER_OF_DISTRICT) :
             worksheet.write(i , 0  , solution_array[i])
 
+def write_query(appropriate_pairs , results):
+
+    filename = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    workbook = xlsxwriter.Workbook(filename)
+    from_district = []
+    to_district = []
+    for element in appropriate_pairs :
+        from_district.append(element[0])
+        to_district.append(element[1])
+
+    df = pd.DataFrame(from_district , to_district , results)
+    df.to_excel(filename , sheet_name = str("Time") , index = False)
+    df.close()
 if IS_TEST == True:
     excel_write('MahalleVerileri.xlsx' , 10000)
