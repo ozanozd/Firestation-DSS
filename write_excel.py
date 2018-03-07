@@ -76,6 +76,6 @@ def write_query(appropriate_pairs , results):
 
     df = pd.DataFrame(from_district , to_district , results)
     df.to_excel(filename , sheet_name = str("Time") , index = False)
-    df.close()
+    workbook.close()
 if IS_TEST == True:
     excel_write('MahalleVerileri.xlsx' , 10000)

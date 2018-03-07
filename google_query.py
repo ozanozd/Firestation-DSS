@@ -32,7 +32,7 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
     i = 0
     results = []
     while i < len(appropriate_pairs):
-        gmaps = googlemaps.Client(key = API_KEYS[4])
+        gmaps = googlemaps.Client(key = API_KEYS[5])
         district1_index = appropriate_pairs[i][0]
         district2_index = appropriate_pairs[i][1]
         x_coord1 = y_coordinates[district1_index - 1]
