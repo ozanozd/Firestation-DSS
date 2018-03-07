@@ -66,16 +66,21 @@ def binary_excel_write(solution_array , filename):
 
 def write_query(appropriate_pairs , results):
 
-    filename = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    filename = datetime.now().strftime('%Y-%m-%d %H_%M_%S')
+    filename = "q" + filename + '.xlsx'
     workbook = xlsxwriter.Workbook(filename)
+    worksheet = workbook.add_worksheet()
     from_district = []
     to_district = []
     for element in appropriate_pairs :
         from_district.append(element[0])
         to_district.append(element[1])
 
-    df = pd.DataFrame(from_district , to_district , results)
-    df.to_excel(filename , sheet_name = str("Time") , index = False)
+    for i in range(10):
+        worksheet.write(i , 0 , from_district[i])
+        worksheet.write(i , 1 , to_district[i])
+        worksheet.write(i , 2 , results[i])
+
     workbook.close()
 if IS_TEST == True:
     excel_write('MahalleVerileri.xlsx' , 10000)
