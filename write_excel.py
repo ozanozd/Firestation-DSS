@@ -76,7 +76,7 @@ def write_query(appropriate_pairs , results):
         from_district.append(element[0])
         to_district.append(element[1])
 
-    for i in range(10):
+    for i in range(len(results)):
         worksheet.write(i , 0 , from_district[i])
         worksheet.write(i , 1 , to_district[i])
         worksheet.write(i , 2 , results[i])

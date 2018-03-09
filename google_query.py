@@ -18,9 +18,9 @@ import pandas
 #Define API_KEY as a constant
 API_KEYS = [ 'AIzaSyBGWTZbOAUijqF5J6SwhF-nYAEzxCljLgU' , 'AIzaSyDtJI-Yg2mnCKJjY_6uIxyxfFo9sZ7R-Ns' , 'AIzaSyAYi9kQkJWezjbvduxEq0wCg-IwkGa-23c',
             'AIzaSyDLiI36NglZ__i9jexUMIVjbfdNGJu0We0' , 'AIzaSyDgvWvI8qr0dqN9U38p9vhdaufPpn_uUqE' , 'AIzaSyBMsrSC-VF5h_N8BvQ-a5-nN8-x--5aIiA',
-            'AIzaSyBsb0tl1xSzelZKRN12bgF8y5IicBL4MVQ','AIzaSyA3ERzBFdG-Uw8CnVCSXZo6z1n__OSRa68' , 'AIzaSyCY4wtz_W3L56P4GAaxXPBr7U66I2I_sis' ,     ]
-#gmaps = googlemaps.Client(key=API_KEY)
-
+            'AIzaSyBsb0tl1xSzelZKRN12bgF8y5IicBL4MVQ','AIzaSyA3ERzBFdG-Uw8CnVCSXZo6z1n__OSRa68' , 'AIzaSyCY4wtz_W3L56P4GAaxXPBr7U66I2I_sis' ,
+            'AIzaSyBI6i29pUKu6TbJdJJFmJttgBwzPvtlHsc' , 'AIzaSyBCdxXU6gCO0Pm-c_n46TNcCqm11Bv9tZg' ,  'AIzaSyDibkW4HHqH3YO2R-nnp1KUeWuYiUJOYWw'  ,
+            'AIzaSyDGSVxQTgvxTEvWfU2En9f9OcS0pji0Kds' , 'AIzaSyDp7SDpmSNjjC29nKBMC9sDzzXctSHcFDM' , 'AIzaSyDVkHOgIaBpadExBHPWmm3gvnQXsg12bJc',  ]
 
 def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinates):
     """
@@ -28,11 +28,11 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
     """
 
     # j is the API_KEYS index
-    j = 0
+    j = 2
     i = 0
     results = []
+    gmaps = googlemaps.Client(key = API_KEYS[j])
     while i < len(appropriate_pairs):
-        gmaps = googlemaps.Client(key = API_KEYS[5])
         district1_index = appropriate_pairs[i][0]
         district2_index = appropriate_pairs[i][1]
         x_coord1 = y_coordinates[district1_index - 1]
@@ -44,16 +44,22 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
         origins.append(str(x_coord1) + ' ' + str(y_coord1))
         destinations.append(str(x_coord2) + ' ' + str(y_coord2))
         directions_result = gmaps.distance_matrix(origins , destinations , mode='driving')
+        if i % 100 == 0 :
+            print("Completed" , i , "queries")
         if directions_result['rows'][0]['elements'][0]['status'] == "OK" and directions_result['status'] == "OK" :
             results.append(directions_result['rows'][0]['elements'][0]['duration']['text'])
             i += 1
-        else:
+        else :
+            results.append("0 mins")
+            print("Problematic")
+        #else:
+        #    j += 1
+        #   gmaps = googlemaps.Client(key = API_KEYS[j])
+        if i % 2400 == 0 :
             j += 1
-        if i == 10 :
-            return results
-            print("Completed" , i)
-    print("Lenght of results is:" , results)
-    print(results)
+            gmaps = googlemaps.Client(key = API_KEYS[j])
+            print("API key chagend from" , j , "to" , j + 1 , ".")
+    return results
 
 def google_query_find(from_district,to_district):
     """
@@ -122,7 +128,7 @@ def run():
     appropriate_pairs = helper.get_appropriate_pairs(from_district , to_district , distances , 7000)
     x_coordinates , y_coordinates = helper.get_x_y_coordinates("MahalleVerileri.xlsx")
     results_array = query_all_appropriate_pairs(appropriate_pairs , x_coordinates , y_coordinates)
-    writer.write_query(appropriate_pairs[0:10] , results_array)
+    writer.write_query(appropriate_pairs , results_array)
     #print("We have" , len(appropriate_pairs) , "pairs in our app.")
 #create_data(10000)
 run()
