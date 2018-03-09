@@ -16,11 +16,14 @@ from datetime import datetime
 import pandas
 
 #Define API_KEY as a constant
-API_KEYS = [ 'AIzaSyBGWTZbOAUijqF5J6SwhF-nYAEzxCljLgU' , 'AIzaSyDtJI-Yg2mnCKJjY_6uIxyxfFo9sZ7R-Ns' , 'AIzaSyAYi9kQkJWezjbvduxEq0wCg-IwkGa-23c',
+API_KEYS = ['AIzaSyBGWTZbOAUijqF5J6SwhF-nYAEzxCljLgU' , 'AIzaSyDtJI-Yg2mnCKJjY_6uIxyxfFo9sZ7R-Ns' , 'AIzaSyAYi9kQkJWezjbvduxEq0wCg-IwkGa-23c',
             'AIzaSyDLiI36NglZ__i9jexUMIVjbfdNGJu0We0' , 'AIzaSyDgvWvI8qr0dqN9U38p9vhdaufPpn_uUqE' , 'AIzaSyBMsrSC-VF5h_N8BvQ-a5-nN8-x--5aIiA',
-            'AIzaSyBsb0tl1xSzelZKRN12bgF8y5IicBL4MVQ','AIzaSyA3ERzBFdG-Uw8CnVCSXZo6z1n__OSRa68' , 'AIzaSyCY4wtz_W3L56P4GAaxXPBr7U66I2I_sis' ,
-            'AIzaSyBI6i29pUKu6TbJdJJFmJttgBwzPvtlHsc' , 'AIzaSyBCdxXU6gCO0Pm-c_n46TNcCqm11Bv9tZg' ,  'AIzaSyDibkW4HHqH3YO2R-nnp1KUeWuYiUJOYWw'  ,
-            'AIzaSyDGSVxQTgvxTEvWfU2En9f9OcS0pji0Kds' , 'AIzaSyDp7SDpmSNjjC29nKBMC9sDzzXctSHcFDM' , 'AIzaSyDVkHOgIaBpadExBHPWmm3gvnQXsg12bJc',  ]
+            'AIzaSyBsb0tl1xSzelZKRN12bgF8y5IicBL4MVQ' , 'AIzaSyA3ERzBFdG-Uw8CnVCSXZo6z1n__OSRa68' , 'AIzaSyCY4wtz_W3L56P4GAaxXPBr7U66I2I_sis',
+            'AIzaSyBI6i29pUKu6TbJdJJFmJttgBwzPvtlHsc' , 'AIzaSyBCdxXU6gCO0Pm-c_n46TNcCqm11Bv9tZg' , 'AIzaSyDibkW4HHqH3YO2R-nnp1KUeWuYiUJOYWw',
+            'AIzaSyDGSVxQTgvxTEvWfU2En9f9OcS0pji0Kds' , 'AIzaSyDp7SDpmSNjjC29nKBMC9sDzzXctSHcFDM' , 'AIzaSyDVkHOgIaBpadExBHPWmm3gvnQXsg12bJc',
+            'AIzaSyCaC_cGqWwycn_EGuzmi3c33V4HOZW3QOk' , 'AIzaSyB1-xyQbKs6MWhUq-arTdIKN5T6w4nbKw0' , 'AIzaSyBl2euWfLfFC8SlCaWToAKlC-VLK5inaIg',
+            'AIzaSyAAqut4XTcwfILCxURFFSzzvGifv_B_TDg' , 'AIzaSyBOfXybp-Snv0x8wbiiuQLO4hCFv9fygBo' , 'AIzaSyAB_0DsDpvs5gtYiWXQ5qR79_snEfckAd4',
+            'AIzaSyApRJCgE9T4uwezUWmFA1o_TxdlAR-pomM' , 'AIzaSyDFVNH1GvqenvjhEcNODjC57J9GX5ggp5s' , 'AIzaSyDBDcGZsHYUQ31BBfv0TWoowejwTOY4xdo']
 
 def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinates):
     """
@@ -28,7 +31,7 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
     """
 
     # j is the API_KEYS index
-    j = 2
+    j = 12
     i = 0
     results = []
     gmaps = googlemaps.Client(key = API_KEYS[j])
@@ -125,7 +128,7 @@ def create_data(threshold):
 
 def run():
     from_district , to_district , distances = helper.read_excel_file("MahalleVerileri.xlsx")
-    appropriate_pairs = helper.get_appropriate_pairs(from_district , to_district , distances , 7000)
+    appropriate_pairs = helper.get_appropriate_pairs(from_district , to_district , distances , 5000)
     x_coordinates , y_coordinates = helper.get_x_y_coordinates("MahalleVerileri.xlsx")
     results_array = query_all_appropriate_pairs(appropriate_pairs , x_coordinates , y_coordinates)
     writer.write_query(appropriate_pairs , results_array)
