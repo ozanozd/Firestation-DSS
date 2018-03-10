@@ -31,10 +31,15 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
     """
 
     # j is the API_KEYS index
-    j = 12
+    j = 0
     i = 0
     results = []
-    gmaps = googlemaps.Client(key = API_KEYS[j])
+    try:
+        gmaps = googlemaps.Client(key = API_KEYS[j])
+    except :
+        print("API key exception caugth.")
+        j += 1
+        gmaps = googlemaps.Client(key = API_KEYS[j] )
     while i < len(appropriate_pairs):
         district1_index = appropriate_pairs[i][0]
         district2_index = appropriate_pairs[i][1]
@@ -60,7 +65,11 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
         #   gmaps = googlemaps.Client(key = API_KEYS[j])
         if i % 2400 == 0 :
             j += 1
-            gmaps = googlemaps.Client(key = API_KEYS[j])
+            try:
+                gmaps = googlemaps.Client(key = API_KEYS[j])
+            except:
+                j += 1
+                gmaps = googlemaps.Client(key = API_KEYS[j])
             print("API key chagend from" , j , "to" , j + 1 , ".")
     return results
 
