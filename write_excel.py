@@ -77,10 +77,12 @@ def write_query(appropriate_pairs , results):
         to_district.append(element[1])
 
     for i in range(len(results)):
-        worksheet.write(i , 0 , from_district[i])
-        worksheet.write(i , 1 , to_district[i])
+        worksheet.write(i , 0 , from_districts[i])
+        worksheet.write(i , 1 , to_districts[i])
         worksheet.write(i , 2 , results[i])
 
     workbook.close()
+
+
 if IS_TEST == True:
     excel_write('MahalleVerileri.xlsx' , 10000)

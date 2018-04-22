@@ -1,4 +1,7 @@
 import pandas
+import os
+import xlsxwriter
+import statistic as sta
 
 #Define a boolean flag , if the flag is set(it is equal to true), then, all the prints for debugging will be performed. Otherwise they will not.
 IS_DEBUG = False
@@ -125,6 +128,62 @@ def read_binary_txt(filename):
 
     return array
 
+def clean_rewrite_data(directory):
+    """
+    This function takes a string in the form = /folder_path . Then, it iterates over all the excel file in this folder and get rid of min in the entries.
+    It writes the new datas in excel files as well.
+    """
+    filename_array = []
+
+    for filename in os.listdir(directory):
+        if filename.endswith(".xlsx") and filename[0] == 'q':
+            from_districts = []
+            to_districts = []
+            old_values = []
+            new_values = []
+            d_excel_file = pandas.ExcelFile(directory + "/" + filename)
+            worksheet_1 = d_excel_file.parse('Sheet1' , header = None)
+            for i in range(len(worksheet_1)):
+                from_districts.append(worksheet_1.iloc[i , 0])
+                to_districts.append(worksheet_1.iloc[i , 1])
+                old_values.append(worksheet_1.iloc[i , 2])
+            for  i in range(len(old_values)):
+                new_values.append(old_values[i][:-5])
+            new_filename = directory + "/" + "w" + filename[1:]
+            write_new_data(new_filename , from_districts , to_districts , new_values)
+        else:
+            print("You are not a excel file dute.")
+
+def write_new_data(filename , from_districts , to_districts , new_values) :
+    workbook = xlsxwriter.Workbook(filename)
+    worksheet = workbook.add_worksheet()
+
+    for i in range(len(new_values)):
+        worksheet.write(i , 0 , from_districts[i])
+        worksheet.write(i , 1 , to_districts[i])
+        worksheet.write(i , 2 , new_values[i])
+
+    workbook.close()
+
+def get_detailed_array(directory):
+    """
+    Detailed function.Secret of allies success in WW2.
+    """
+    array_of_array = []
+    for i in range(4):
+        array_of_array.append([])
+    for filename in os.listdir(directory):
+        if filename.endswith(".xlsx") and filename[0] == 'w':
+            d_excel_file = pandas.ExcelFile(directory + "/" + filename)
+            worksheet_1 = d_excel_file.parse('Sheet1' , header = None)
+            for i in range(len(worksheet_1)):
+                array_of_array[i].append(worksheet_1.iloc[i,2])
+
+        else:
+            print("You are not a excel file dute.")
+    print(array_of_array)
+    sta.fit_dist(list(array_of_array[0]))
+    return array_of_array
 def test():
     """
     Tests the above function
@@ -140,4 +199,8 @@ def run():
     """
     Run the application
     """
-    read_binary_txt('solution.txt')
+    #clean_rewrite_data("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
+    #read_binary_txt('solution.txt')
+    get_detailed_array("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
+
+#run()
