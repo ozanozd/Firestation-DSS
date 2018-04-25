@@ -9,6 +9,7 @@ IS_DEBUG = False
 #Define a boolean flag, if the flag is set(it is equal to true), then run the test. Otherwise do not run it.
 IS_TEST = False
 
+NUMBER_OF_DISTRICT = 975
 
 def get_district_names(filename):
     """
@@ -184,6 +185,71 @@ def get_detailed_array(directory):
     print(array_of_array)
     sta.fit_dist(list(array_of_array[0]))
     return array_of_array
+
+def coord_read(filename):
+    """
+    This function reads the x-y data of polygon coordinates and return it as a list of lists.
+    """
+    all_data = pandas.ExcelFile(filename)
+    worksheet_1 = all_data.parse('Sheet1')
+
+    #Get the columns into columns
+    columns_1 = worksheet_1.columns
+
+    #It is easier to work with list objects,so cast them to list objects.
+    columns_1 = list(columns_1)
+
+    if IS_DEBUG == True:
+        print("The columns in the first worksheet are: " , columns_1)
+        print("The columns in the second workshett are: " , columns_2)
+
+    #Read all the x_coordinates and y_coordinates
+    old_district_names = worksheet_1['AD'].values
+
+    #Get rid of empty districts
+    new_district_names = []
+    for i in range(len(old_district_names)):
+        if type(old_district_names[i]) == type(" "):
+            new_district_names.append(old_district_names[i])
+
+    print(new_district_names)
+
+def polygon_coords(filename):
+    """
+    This function reads x-y data of polygon coordinates and return it
+    """
+    all_data = pandas.ExcelFile(filename)
+    worksheet_1 = all_data.parse('Sheet1')
+
+    #Get the columns into columns
+    columns_1 = worksheet_1.columns
+
+    #It is easier to work with list objects,so cast them to list objects.
+    columns_1 = list(columns_1)
+
+    id_district = worksheet_1['shapeid'].values
+    x_district = worksheet_1['x'].values
+    y_district = worksheet_1['y'].values
+
+    lat = []
+    longs = []
+
+    for i in range(NUMBER_OF_DISTRICT):
+        lat.append([])
+        longs.append([])
+
+    for i in range(len(x_district)):
+        if pandas.isna(x_district[i]) != True and pandas.isna(y_district[i]) != True and pandas.isna(id_district[i]) != True :
+            while x_district[i] > 100 :
+                x_district[i] /= 10
+
+            while y_district[i] > 100 :
+                y_district[i] /= 10
+
+            lat[int(id_district[i]/10)].append(x_district[i])
+            longs[int(id_district[i]/10)].append(y_district[i])
+
+    return lat,longs
 def test():
     """
     Tests the above function
@@ -201,6 +267,7 @@ def run():
     """
     #clean_rewrite_data("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
     #read_binary_txt('solution.txt')
-    get_detailed_array("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
-
+    #get_detailed_array("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
+    #coord_read("temp-attributes.xlsx")
+    polygon_coords("temp-nodes.xlsx")
 #run()

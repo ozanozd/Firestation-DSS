@@ -80,11 +80,12 @@ def run():
     x_coordinates , y_coordinates , name_of_districts , binary_array = prepare_points("solution.txt")
     add_marker(x_coordinates , y_coordinates , name_of_districts , binary_array)
     gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
-    lats , longs = read_polygon("polygon.txt")
-    lats1 , longs1 = read_polygon("polygon1.txt")
-    gmap.polygon(longs , lats , color = 'green' , c = 'red' , title  = 'Kadikoy')
-    gmap.polygon(longs1 , lats1 , color = 'green' , c = 'red' , title = 'Umraniye')
+    lats , longs = helper.polygon_coords("temp-nodes.xlsx")
+    for i in range(975):
+        gmap.polygon(longs[i] , lats[i] , color = 'green' , c = 'red')
     gmap.draw("last_map.html")
     path = os.path.abspath("last_map.html")
     url = "file://" + path
     webbrowser.open(url)
+
+run()

@@ -37,7 +37,7 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
     """
 
     # j is the API_KEYS index
-    j = 4
+    j = 9
     i = 0
     results = []
     is_valid = False
