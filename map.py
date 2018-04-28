@@ -11,7 +11,7 @@ import re
 import gmplot
 
 #Inside project imports
-import read_excel as reader
+import read_file as reader
 
 #Define number of districts as a constant
 NUMBER_OF_DISTRICTS = 867

@@ -1,0 +1,280 @@
+#General library imports
+import pandas
+import os
+import xlsxwriter
+import statistic as sta
+
+#Inside project imports
+import utilities as util
+
+#Define a boolean flag , if the flag is set(it is equal to true), then, all the prints for debugging will be performed. Otherwise they will not.
+IS_DEBUG = False
+
+#Define a boolean flag, if the flag is set(it is equal to true), then run the test. Otherwise do not run it.
+IS_TEST = False
+
+NUMBER_OF_DISTRICT = 867 #Number of district for solvers
+VIS_NUMBER_OF_DISTRICT = 975 #Number of district for visualization
+THRESHOLD = 7000 # Cant change
+
+def read_district_file():
+    """
+    This function reads an MahalleVerileri.xlsx .
+    It takes none argument.
+    This function returns six variable:
+        i)   names_of_district : List of NUMBER_OF_DISTRICT length which consists of district names like ["YAKUPLU" , ..]
+        ii)  x_coordinates     : List of NUMBER_OF_DISTRICT length which consists of x_coordinates of centers of districts
+        iii) y_coordinates     : List of NUMBER_OF_DISTRICT length which consists of y_coordinates of centers of districts
+        iv)  from_district     : List of NUMBER_OF_DISTRICT * NUMBER_OF_DISTRICT length which consists of ids of from_district
+        v)   to_district       : List of NUMBER_OF_DISTRICT * NUMBER_OF_DISTRICT length which consists of ids of to_district
+        vi)  distances         : List of NUMBER_OF_DISTRICT * NUMBER_OF_DISTRICT length which consists of distances between from_district and to_district
+    """
+
+    # WORKS TO BE DONE: If the file is not there an exception should be raise as well
+
+    #Read the excel file into df, since we have two different worksheets parse the excel file into two different worksheets
+    all_data = pandas.ExcelFile("MahalleriVerileri.xlsx")
+    worksheet_1 = all_data.parse('Mahalle Listesi')
+    worksheet_2 = all_data.parse('Uzaklıklar')
+
+    #Get the columns into columns
+    columns_1 = worksheet_1.columns
+    columns_2 = worksheet_2.columns
+
+    #It is easier to work with list objects,so cast them to list objects.
+    columns_1 = list(columns_1)
+    columns_2 = list(columns_2)
+
+    if IS_DEBUG == True:
+        print("The columns in the first worksheet are: " , columns_1)
+        print("The columns in the second workshett are: " , columns_2)
+
+    #Read all the x_coordinates and y_coordinates
+    names_of_district = worksheet_1['MAHALLE']
+    x_coordinates = worksheet_1['X'].values
+    y_coordinates = worksheet_1['Y'].values
+
+    #Read all the from , to , distance
+    from_district = worksheet_2['From']
+    to_district = worksheet_2['To']
+    distances = worksheet_2['Distance(m)']
+
+    if IS_DEBUG == True:
+        print("Length of from_district is: " , len(from_district))
+        print("Length of to_district is: " , len(to_district))
+        print("Length of distances is: " , len(distances))
+        print("Length of the X coordinates is: " , len(x_coordinates))
+        print("Length of the Y coordinates is: " , len(y_coordinates))
+
+    return names_of_district , x_coordinates , y_coordinates , from_district , to_district , distances
+
+def read_appropriate_pairs(filename):
+    """
+    This function reads appropriate_pairs excel file and returns appropriate_pairs as a list of lists
+    It takes 1 argument:
+        i)  filename      : A string , which is filename of excel file
+    It returns 2 variables:
+        i)  from_district : A list , which consists of ids of from_district
+        ii) to_district   : A list , which consists of ids of to_district
+    """
+    #Get the full_path using current_directory
+    current_directory = util.get_current_directory()
+    full_path = current_directory + "/Appropriate_Pairs/" + filename
+
+    all_data = pandas.ExcelFile(full_path)
+    worksheet = all_data.parse('Sheet1')
+
+    #Get the columns into columns
+    columns = worksheet.columns
+
+    #It is easier to work with list objects,so cast them to list objects.
+    columns = list(columns)
+
+    from_district = worksheet['From_District']
+    to_district = worksheet['To_District']
+
+    return from_district , to_district
+
+def read_binary_txt(filename):
+    """
+    This function reads solution txt which consist of NUMBER_OF_DISTRICT binary values in line 1
+    It takes 1 argument:
+        filename : A string , which is the name of the txt file
+    It returns 1 variable:
+        solution_array : A list , which consist of NUMBER_OF_DISTRICT binary values
+    """
+    current_directory = util.get_current_directory()
+    full_path = current_directory + "/Solutions/" + filename
+
+    #Open the file and read the content of it into the variable "content"
+    file = open(full_path , 'r')
+    content = file.read()
+
+    #Get rid of \n at the at of the content
+    content = content.strip()
+
+    #Collect all the elements in array
+    solution_array = []
+    for element in content:
+        if element != ' ':
+            array.append(element)
+
+    #Make the elements integer
+    for i in range(len(array)):
+        solution_array[i] = int(array[i])
+
+    return solution_array
+
+def read_query_file(filename):
+    """
+    This function read a query file.
+    It takes 1 argument:
+        i) filename : A string , name of the excel file to read
+    It returns 3 variables:
+        i)   from_district : A list which consists of ids of from_district
+        ii)  to_district   : A list which consists of ids of to_district
+        iii) duration      : A list which consists of travel time between from_district and to_district such as "8 mins"
+    """
+    #Get the full path using current directory
+    current_directory = util.get_current_directory()
+    full_path = current_directory + "/Data_Points/" + filename
+
+    #Open excel file
+    d_excel_file = pandas.ExcelFile(full_path)
+    worksheet = d_excel_file.parse('Sheet1' , header = None)
+
+    #Initialize the variables
+    from_district = []
+    to_district = []
+    duration = []
+
+    #Fill the variables usign excel data
+    for i in range(len(worksheet)):
+        from_districts.append(worksheet_1.iloc[i , 0])
+        to_districts.append(worksheet_1.iloc[i , 1])
+        duration.append(worksheet_1.iloc[i , 2])
+
+    return from_district , to_district , duration
+
+def combine_queries(length_of_appropriate_pairs):
+    """
+    This function reads all the cleaned query files, then it combines them in an array which consists of len(appropriate_pairs) lists each of which
+    consists of 60 data points
+    It takes no argument.
+    It returns 1 variable:
+        combined_data_points : A list of lists , whose length is len(appropriate_pairs) , each element list has length 60
+    """
+
+    #Get the full path using current_directory
+    current_directory = util.get_current_directory()
+    full_path = current_directory + "/New_Data_Points"
+
+    #Initialize the variables
+    combined_data_points = []
+    for i in range(length_of_appropriate_pairs):
+        combined_data_points.append([])
+
+    #Iterate over all excel queries and add the data points accordingly
+    for filename in os.listdir(full_path):
+        if filename.endswith(".xlsx") and filename[0] == 'w':
+            d_excel_file = pandas.ExcelFile(full_path + "/" + filename)
+            worksheet_1 = d_excel_file.parse('Sheet1' , header = None)
+            for i in range(len(worksheet_1)):
+                combined_data_points[i].append(worksheet_1.iloc[i,2])
+        else:
+            print("You are not a excel file dute.")
+
+    return combined_data_points
+
+def read_new_district_names(filename):
+    """
+    This function reads the x-y data of polygon coordinates and return it as a list of lists.
+    """
+    all_data = pandas.ExcelFile(filename)
+    worksheet_1 = all_data.parse('Sheet1')
+
+    #Get the columns into columns
+    columns_1 = worksheet_1.columns
+
+    #It is easier to work with list objects,so cast them to list objects.
+    columns_1 = list(columns_1)
+
+    if IS_DEBUG == True:
+        print("The columns in the first worksheet are: " , columns_1)
+        print("The columns in the second workshett are: " , columns_2)
+
+    #Read all the x_coordinates and y_coordinates
+    old_district_names = worksheet_1['AD'].values
+
+    #Get rid of empty districts
+    new_district_names = []
+    for i in range(len(old_district_names)):
+        if type(old_district_names[i]) == type(" "):
+            new_district_names.append(old_district_names[i])
+
+    return new_district_names
+
+def polygon_coords(filename):
+    """
+    This function reads x-y data of polygon coordinates and return it
+    """
+
+    #Get full_path using current_directory
+    current_directory = util.get_current_directory()
+    full_path = current_directory + "\Coords/" + filename
+
+
+    all_data = pandas.ExcelFile(full_path)
+    worksheet_1 = all_data.parse('Sheet1')
+
+    #Get the columns into columns
+    columns_1 = worksheet_1.columns
+
+    #It is easier to work with list objects,so cast them to list objects.
+    columns_1 = list(columns_1)
+
+    id_district = worksheet_1['shapeid'].values
+    x_district = worksheet_1['x'].values
+    y_district = worksheet_1['y'].values
+
+    #Initialize variables
+    lat = []
+    longs = []
+
+    for i in range(VIS_NUMBER_OF_DISTRICT):
+        lat.append([])
+        longs.append([])
+
+    for i in range(len(x_district)):
+        if pandas.isna(x_district[i]) != True and pandas.isna(y_district[i]) != True and pandas.isna(id_district[i]) != True :
+            while x_district[i] > 100 :
+                x_district[i] /= 10
+
+            while y_district[i] > 100 :
+                y_district[i] /= 10
+
+            lat[int(id_district[i]/10)].append(x_district[i])
+            longs[int(id_district[i]/10)].append(y_district[i])
+
+    return lat,longs
+def test():
+    """
+    Tests the above function
+    """
+
+    from_district , to_district , distances = read_excel_file('MahalleVerileri.xlsx')
+    pair_array = get_appropriate_pairs(from_district , to_district , distances , 10000)
+    print("Length of pair_array is:" , len(pair_array))
+if IS_TEST == True:
+    test()
+
+def run():
+    """
+    Run the application
+    """
+    #clean_rewrite_data("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
+    #read_binary_txt('solution.txt')
+    #get_detailed_array("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
+    #coord_read("temp-attributes.xlsx")
+    polygon_coords("temp-nodes.xlsx")
+#run()

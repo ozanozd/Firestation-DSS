@@ -1,9 +1,10 @@
+"""
 #General library imports
 import numpy
 from docplex.mp.model import Model
 
 #Inside project imports
-import write_excel as writer
+import write_file as writer
 
 mdl = Model(name='C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/BaseModel.mod')
 
@@ -30,3 +31,5 @@ if not mdl.solve():
     print("*** Problem has no solution")
 else:
     mdl.print_solution()
+
+"""

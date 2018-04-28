@@ -9,7 +9,7 @@ IS_DEBUG = True
 #Write answers to the document(txt or excel?)
 #x,y coordinates are not good for queries:(
 
-import write_excel as writer
+import write_file as writer
 import googlemaps
 from datetime import datetime
 import pandas
@@ -155,9 +155,9 @@ def create_data(threshold):
         results_array.append(google_query_find(from_district[index] , to_district[index]))
 
 def run():
-    from_district , to_district , distances = helper.read_excel_file("MahalleVerileri.xlsx")
-    appropriate_pairs = helper.get_appropriate_pairs(from_district , to_district , distances , 7000)
-    x_coordinates , y_coordinates = helper.get_x_y_coordinates("MahalleVerileri.xlsx")
+    from_district , to_district , distances = writer.reader.read_excel_file("MahalleVerileri.xlsx")
+    appropriate_pairs = reader.get_appropriate_pairs(from_district , to_district , distances , 7000)
+    x_coordinates , y_coordinates = reader.get_x_y_coordinates("MahalleVerileri.xlsx")
     results_array = query_all_appropriate_pairs(appropriate_pairs , x_coordinates , y_coordinates)
     writer.write_query(appropriate_pairs , results_array)
     #print("We have" , len(appropriate_pairs) , "pairs in our app.")
