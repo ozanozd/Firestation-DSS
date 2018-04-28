@@ -9,7 +9,6 @@ IS_DEBUG = True
 #Write answers to the document(txt or excel?)
 #x,y coordinates are not good for queries:(
 
-import read_excel_trial as helper
 import write_excel as writer
 import googlemaps
 from datetime import datetime
@@ -37,7 +36,7 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
     """
 
     # j is the API_KEYS index
-    j = 9
+    j = 24
     i = 0
     results = []
     is_valid = False

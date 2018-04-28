@@ -3,13 +3,15 @@
 This program open a map using foluim library
 """
 
-import folium
+#General library imports
 import webbrowser
 import os
 import pandas as pd
 import re
 import gmplot
-import read_excel_trial as helper
+
+#Inside project imports
+import read_excel as reader
 
 #Define number of districts as a constant
 NUMBER_OF_DISTRICTS = 867
@@ -38,9 +40,9 @@ def prepare_points(filename):
     """
 
     fire_station_points = []
-    binary_array = helper.read_binary_txt(filename)
-    x_coordinates , y_coordinates = helper.get_x_y_coordinates('MahalleVerileri.xlsx')
-    name_of_districts = helper.get_district_names('MahalleVerileri.xlsx')
+    binary_array = reader.read_binary_txt(filename)
+    x_coordinates , y_coordinates = reader.get_x_y_coordinates('MahalleVerileri.xlsx')
+    name_of_districts = reader.get_district_names('MahalleVerileri.xlsx')
     return x_coordinates , y_coordinates , name_of_districts , binary_array
 
 def read_polygon(filename):
@@ -80,7 +82,7 @@ def run():
     x_coordinates , y_coordinates , name_of_districts , binary_array = prepare_points("solution.txt")
     add_marker(x_coordinates , y_coordinates , name_of_districts , binary_array)
     gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
-    lats , longs = helper.polygon_coords("temp-nodes.xlsx")
+    lats , longs = reader.polygon_coords("temp-nodes.xlsx")
     for i in range(975):
         gmap.polygon(longs[i] , lats[i] , color = 'green' , c = 'red')
     gmap.draw("last_map.html")
@@ -88,4 +90,4 @@ def run():
     url = "file://" + path
     webbrowser.open(url)
 
-run()
+#run()

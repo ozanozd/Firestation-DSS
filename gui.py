@@ -6,13 +6,15 @@ Gui is designed in object oriented style.
 # i) Add threshold as an user entry to gui
 # ii) Edit radiobutton in a way that only one of them can be selected
 
-
+#General library imports
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 from tkinter import messagebox
-import write_excel_availability_matrix as writer
 import os.path
-import map as mp
+
+#Inside project imports
+import cplex_imp as solver
+import map
 
 #Define height and width as constants
 HEIGHT = 400
@@ -82,7 +84,7 @@ class MainApplication:
 
         return True
     def run_map(self):
-        mp.run()
+        map.run()
 
         #if self.check_validity_threshold() == False :
         #    messagebox.showerror("Wrong type!" , "Please enter an integer value.")

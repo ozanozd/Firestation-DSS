@@ -1,7 +1,11 @@
+#General library imports
 import numpy
 from docplex.mp.model import Model
 
-mdl = Model(name='firestations')
+#Inside project imports
+import write_excel as writer
+
+mdl = Model(name='C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/BaseModel.mod')
 
 Num_Districts = 7;
 a = [[1,1,0,1,0,0,1],
