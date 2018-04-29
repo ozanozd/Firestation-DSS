@@ -62,7 +62,7 @@ def write_solution_excel(solution_array , filename):
     workbook = xlsxwriter.Workbook(filename)
     worksheet = workbook.add_worksheet()
     row = 0
-    for i in range(reader.NUMBER_OF_DISTRICT) :
+    for i in range(reader.util.NUMBER_OF_DISTRICT) :
             worksheet.write(i , 0  , solution_array[i])
 
 def write_query(appropriate_pairs , results):
@@ -88,64 +88,40 @@ def write_query(appropriate_pairs , results):
 if IS_TEST == True:
     excel_write('MahalleVerileri.xlsx' , 10000)
 
-def generate_availability_matrix():
-    """
-    This function creates availability matrix and returns it.
-    """
-
-    # Initialize the availability_matrix
-    availability_matrix = []
-    temp_array = []
-    for i in range(reader.NUMBER_OF_DISTRICT) :
-        temp_array.append(0)
-
-    for i in range(reader.NUMBER_OF_DISTRICT) :
-        availability_matrix.append(list(temp_array))
-
-    if IS_DEBUG == True :
-        print("The number of rows in availability_matrix is " , len(availability_matrix))
-        print("The number of columns in availability_matrix is " , len(availability_matrix[0]))
-
-    from_district , to_district , distances = reader.read_excel_file("MahalleVerileri.xlsx")
-    pair_array = reader.get_appropriate_pairs(from_district , to_district , distances , reader.THRESHOLD)
-
-    if IS_DEBUG == True:
-        print("The number of availabile pairs is" , len(pair_array))
-
-    # Write the appropriate binary values in availability_matrix
-    for element in pair_array :
-        availability_matrix[element[0] - 1][element[1] - 1] = 1
-
-    return availability_matrix
-
-def generate_fixed_cost_array():
-    """
-    This function generates a fixed_cost array with number of district elements
-    """
-    fixed_cost_array = []
-    for i in range(reader.NUMBER_OF_DISTRICT) :
-        fixed_cost_array.append(1)
-    return fixed_cost_array
-def write_availability_matrix_excel(availability_matrix):
+def write_availability_matrix_excel(availability_matrix , threshold):
     """
     This function writes availability matrix into an excel file.
+    It takes 2 arguments :
+        i)  availability_matrix : A list of list , which represents whether the distance between two district within threshold or not.It contains binary values
+        ii) threshold           : An interger    , which is the maximum possible distance for two district to consider them as appropriate_pairs
+    It returns nothing.
     """
-    name = "availability_matrix_" + str(reader.THRESHOLD)
-    workbook = xlsxwriter.Workbook(name+'.xlsx')
+    #Get full_path using current_directory
+    current_directory = reader.util.get_current_directory()
+    name = "availability_matrix_" + str(threshold) + '.xlsx'
+    full_path = current_directory + "/Availability_Matrix/" + name
+
+    workbook = xlsxwriter.Workbook(full_path)
     worksheet = workbook.add_worksheet()
     row = 0
     col = 0
-    for i in range(reader.NUMBER_OF_DISTRICT) :
-        for k in range(reader.NUMBER_OF_DISTRICT) :
+    for i in range(reader.util.NUMBER_OF_DISTRICT) :
+        for k in range(reader.util.NUMBER_OF_DISTRICT) :
             worksheet.write(row + i , col + k  , availability_matrix[i][k])
 
 def write_new_data(filename , from_districts , to_districts , new_values) :
     """
-    This function takes writes new queries.
+    This function writes new queries.
+    It takes 4 arguments:
+        i)   filename      : A string , which represents name of excel file to written
+        ii)  from_district : A list   , which contains ids of from_district
+        iii) to_district   : A list   , which contains ids of to_district
+        iv)  new_values    : A list   , which contains the durations between appropriate_pairs such as 8 rather than 8 mins
+    It return nothing.
     """
     #Get the full_path using current_directory
     current_directory = util.get_current_directory()
-    full_path = current_directory + "/New_Data_Points" + "/" + filename
+    full_path = current_directory + "/New_Data_Points/" + filename
     workbook = xlsxwriter.Workbook(full_path)
     worksheet = workbook.add_worksheet()
 
@@ -162,10 +138,8 @@ def clean_rewrite_data():
     It takes no arguments.
     It returns nothing.
     """
-
     current_directory = util.get_current_directory()
     old_full_path = current_directory + "/Data_Points"
-
 
     for filename in os.listdir(old_full_path):
         #Detailed and extremely detailed and motivated security check

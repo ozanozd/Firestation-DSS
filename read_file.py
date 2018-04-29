@@ -1,8 +1,7 @@
 #General library imports
-import pandas
+import pandas as pd
 import os
 import xlsxwriter
-import statistic as sta
 
 #Inside project imports
 import utilities as util
@@ -12,10 +11,6 @@ IS_DEBUG = False
 
 #Define a boolean flag, if the flag is set(it is equal to true), then run the test. Otherwise do not run it.
 IS_TEST = False
-
-NUMBER_OF_DISTRICT = 867 #Number of district for solvers
-VIS_NUMBER_OF_DISTRICT = 975 #Number of district for visualization
-THRESHOLD = 7000 # Cant change
 
 def read_district_file():
     """
@@ -33,7 +28,7 @@ def read_district_file():
     # WORKS TO BE DONE: If the file is not there an exception should be raise as well
 
     #Read the excel file into df, since we have two different worksheets parse the excel file into two different worksheets
-    all_data = pandas.ExcelFile("MahalleriVerileri.xlsx")
+    all_data = pd.ExcelFile("MahalleVerileri.xlsx")
     worksheet_1 = all_data.parse('Mahalle Listesi')
     worksheet_2 = all_data.parse('Uzaklıklar')
 
@@ -81,7 +76,7 @@ def read_appropriate_pairs(filename):
     current_directory = util.get_current_directory()
     full_path = current_directory + "/Appropriate_Pairs/" + filename
 
-    all_data = pandas.ExcelFile(full_path)
+    all_data = pd.ExcelFile(full_path)
     worksheet = all_data.parse('Sheet1')
 
     #Get the columns into columns
@@ -117,11 +112,11 @@ def read_binary_txt(filename):
     solution_array = []
     for element in content:
         if element != ' ':
-            array.append(element)
+            solution_array.append(element)
 
-    #Make the elements integer
-    for i in range(len(array)):
-        solution_array[i] = int(array[i])
+    #Make the elements integer and win the war.
+    for i in range(len(solution_array)):
+        solution_array[i] = int(solution_array[i])
 
     return solution_array
 
@@ -140,7 +135,7 @@ def read_query_file(filename):
     full_path = current_directory + "/Data_Points/" + filename
 
     #Open excel file
-    d_excel_file = pandas.ExcelFile(full_path)
+    d_excel_file = pd.ExcelFile(full_path)
     worksheet = d_excel_file.parse('Sheet1' , header = None)
 
     #Initialize the variables
@@ -177,7 +172,7 @@ def combine_queries(length_of_appropriate_pairs):
     #Iterate over all excel queries and add the data points accordingly
     for filename in os.listdir(full_path):
         if filename.endswith(".xlsx") and filename[0] == 'w':
-            d_excel_file = pandas.ExcelFile(full_path + "/" + filename)
+            d_excel_file = pd.ExcelFile(full_path + "/" + filename)
             worksheet_1 = d_excel_file.parse('Sheet1' , header = None)
             for i in range(len(worksheet_1)):
                 combined_data_points[i].append(worksheet_1.iloc[i,2])
@@ -190,7 +185,7 @@ def read_new_district_names(filename):
     """
     This function reads the x-y data of polygon coordinates and return it as a list of lists.
     """
-    all_data = pandas.ExcelFile(filename)
+    all_data = pd.ExcelFile(filename)
     worksheet_1 = all_data.parse('Sheet1')
 
     #Get the columns into columns
@@ -224,7 +219,7 @@ def polygon_coords(filename):
     full_path = current_directory + "\Coords/" + filename
 
 
-    all_data = pandas.ExcelFile(full_path)
+    all_data = pd.ExcelFile(full_path)
     worksheet_1 = all_data.parse('Sheet1')
 
     #Get the columns into columns
@@ -241,12 +236,12 @@ def polygon_coords(filename):
     lat = []
     longs = []
 
-    for i in range(VIS_NUMBER_OF_DISTRICT):
+    for i in range(util.VIS_NUMBER_OF_DISTRICT):
         lat.append([])
         longs.append([])
 
     for i in range(len(x_district)):
-        if pandas.isna(x_district[i]) != True and pandas.isna(y_district[i]) != True and pandas.isna(id_district[i]) != True :
+        if pd.isna(x_district[i]) != True and pd.isna(y_district[i]) != True and pd.isna(id_district[i]) != True :
             while x_district[i] > 100 :
                 x_district[i] /= 10
 

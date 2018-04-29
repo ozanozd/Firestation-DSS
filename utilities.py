@@ -2,8 +2,13 @@
 This module contains general utility functions for the entire program
 """
 
+#Open close debugging , testing
 IS_DEBUG = False
 IS_TEST = False
+
+#General constants initialization
+NUMBER_OF_DISTRICT = 867 #Number of district for solvers
+VIS_NUMBER_OF_DISTRICT = 975 #Number of district for visualization
 
 #General library imports
 import os
@@ -26,7 +31,7 @@ def get_current_directory():
     print("Directory name is : " + foldername)
     """
 
-def get_appropriate_pairs(from_district , to_district , distances , threshold):
+def get_appropriate_pairs(from_district , to_district , distance , threshold):
     """
     This function returns the pair of districts such that the distance between them is less than threshold returns it.
     If dist(district_a , district_b ) < threshold and district_a < district_b the list only contains (district_a , district_b).
@@ -41,16 +46,15 @@ def get_appropriate_pairs(from_district , to_district , distances , threshold):
 
     pair_array = []
     #Iterate over all enties
-    for i in range(len(distances)) :
+    for i in range(len(distance)) :
         district_1 = from_district[i]
         district_2 = to_district[i]
 
         #We found an appropriate pair if the following if statement is satisfied
-        if distances[i] <= threshold and district_1 < district_2  :
+        if distance[i] <= threshold and district_1 < district_2  :
             pair_array.append([district_1 , district_2])
 
     return pair_array
-
 
 def clean_query(duration):
     """
@@ -82,3 +86,52 @@ def seperate_appropriate_pairs(appropriate_pairs):
         to_district.append(element[1])
 
     return from_district , to_district
+
+def generate_availability_matrix(from_district , to_district , distance , threshold):
+    """
+    This function creates availability matrix and returns it.
+    It takes 4 arguments:
+        i)   from_district        : A  list         , which consists of ids of from_districts
+        ii)  to_district          : A  list         , which consists of ids of to_districts
+        iii) distance             : A  list         , which consists of distances between from_district and to_district
+        iv)  threshold            : An integer      , which is the number that represents the maximum distances between two districts to call them appropriate
+    It returns 1 variable:
+        i)   availability_matrix  : A list of lists , which represents whether the distance between two districts within the threshold or not.It contains binary values
+    """
+
+    # Initialize the availability_matrix
+    availability_matrix = []
+    temp_array = []
+    for i in range(NUMBER_OF_DISTRICT) :
+        temp_array.append(0)
+
+    for i in range(NUMBER_OF_DISTRICT) :
+        availability_matrix.append(list(temp_array))
+
+    if IS_DEBUG == True :
+        print("The number of rows in availability_matrix is " , len(availability_matrix))
+        print("The number of columns in availability_matrix is " , len(availability_matrix[0]))
+
+
+    pair_array = get_appropriate_pairs(from_district , to_district , distance , threshold)
+
+    if IS_DEBUG == True:
+        print("The number of availabile pairs is" , len(pair_array))
+
+    # Write the appropriate binary values in availability_matrix
+    for element in pair_array :
+        availability_matrix[element[0] - 1][element[1] - 1] = 1
+
+    return availability_matrix
+
+def generate_fixed_cost_array():
+    """
+    This function generates a fixed_cost array with number of district elements
+    It takes no arguments.
+    It returns 1 variable:
+        fixed_cost_array : A list , whose length is NUMBER_OF_DISTRICT and it contains only 1(dummy) as an element
+    """
+    fixed_cost_array = []
+    for i in range(NUMBER_OF_DISTRICT) :
+        fixed_cost_array.append(1)
+    return fixed_cost_array
