@@ -1,12 +1,25 @@
-"""
 #General library imports
 import numpy
 from docplex.mp.model import Model
+from docloud.job import JobClient
 
+CPLEX_BASE_URL = "https://api-oaas.docloud.ibmcloud.com/job_manager/rest/v1/"
+CPLEX_API_KEY = "api_df058b14-fb2d-4010-9cef-c92cfa379561"
 #Inside project imports
 import write_file as writer
 
-mdl = Model(name='C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/BaseModel.mod')
+current_directory = writer.reader.util.get_current_directory()
+full_path = current_directory + "/Mode_Files/" + "BaseModel.mod"
+#context.solver.docloud.url = CPLEX_BASE_URL
+#context.solver.docloud.key = CPLEX_API_KEY
+
+client = JobClient(CPLEX_BASE_URL, CPLEX_API_KEY)
+resp = client.execute(input = [ "Mod_Files/BaseModelTest.dat",
+                                    "Mod_Files/BaseModel.mod"],
+                          output = "results.json")
+"""
+mdl = Model(name="Haydi_Bakalim" , context = )
+
 
 Num_Districts = 7;
 a = [[1,1,0,1,0,0,1],
@@ -31,5 +44,4 @@ if not mdl.solve():
     print("*** Problem has no solution")
 else:
     mdl.print_solution()
-
 """
