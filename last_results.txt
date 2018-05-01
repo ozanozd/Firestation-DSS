@@ -1,0 +1,13 @@
+// solution (optimal) with objective 1900
+// Quality Incumbent solution:
+// MILP objective                                 1.9000000000e+03
+// MILP solution norm |x| (Total, Max)            2.00000e+00  1.00000e+00
+// MILP solution error (Ax=b) (Total, Max)        0.00000e+00  0.00000e+00
+// MILP x bound error (Total, Max)                0.00000e+00  0.00000e+00
+// MILP x integrality error (Total, Max)          0.00000e+00  0.00000e+00
+// MILP slack bound error (Total, Max)            0.00000e+00  0.00000e+00
+// 
+
+y = [0
+         1 0 1 0 0 0];
+
