@@ -9,6 +9,7 @@ The program writes the appropriate pairs into an excel sheet
 import pandas as pd
 import xlsxwriter
 from datetime import datetime
+import numpy as np
 
 #Inside project imports
 import read_file as reader
@@ -120,7 +121,7 @@ def write_new_data(filename , from_districts , to_districts , new_values) :
     It return nothing.
     """
     #Get the full_path using current_directory
-    current_directory = util.get_current_directory()
+    current_directory = reader.util.get_current_directory()
     full_path = current_directory + "/New_Data_Points/" + filename
     workbook = xlsxwriter.Workbook(full_path)
     worksheet = workbook.add_worksheet()
@@ -138,23 +139,41 @@ def clean_rewrite_data():
     It takes no arguments.
     It returns nothing.
     """
-    current_directory = util.get_current_directory()
+    current_directory = reader.util.get_current_directory()
     old_full_path = current_directory + "/Data_Points"
 
-    for filename in os.listdir(old_full_path):
+    for filename in reader.util.os.listdir(old_full_path):
         #Detailed and extremely detailed and motivated security check
         if filename.endswith(".xlsx") and filename[0] == 'q':
             from_district , to_district , duration = reader.read_query_file(filename)
             new_duration = reader.util.clean_query(duration)
             new_filename = "w" + filename[1:]
-            write_new_data(new_filename , from_districts , to_districts , new_duration)
+            write_new_data(new_filename , from_district , to_district , new_duration)
         else:
             print("You are not a excel file dute.")
 
+
+def write_distributions(dist_names , params):
+    """
+    This function write distributions and their paramateres to excel file called "distribution_fit.xlsx"
+    It takes 2 arguments :
+        i) dist_names : A list , which containts names of distributions
+        ii) params    : A list , which contains parameters of distributions
+    It returns nothing.
+    """
+    workbook = xlsxwriter.Workbook("distribution_fit.xlsx")
+    worksheet = workbook.add_worksheet()
+
+    worksheet.write(0 , 0 , "Dist_Names")
+    worksheet.write(0 , 1 , "Parameters")
+    for i in range(len(dist_names)):
+        worksheet.write(i + 1 , 0 , dist_names[i])
+        worksheet.write(i + 1 , 1 , params[i])
+
+    workbook.close()
 def run():
     """
     Look at the name of the function and guess its purpose..
     """
-    availability_matrix = generate_availability_matrix()
-    write_availability_matrix_excel(availability_matrix)
+    clean_rewrite_data()
 #run()

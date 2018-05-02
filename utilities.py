@@ -65,7 +65,11 @@ def clean_query(duration):
 
     #Clean each duration in the duration list
     for i in range(len(duration)):
-        new_duration.append(float(duration[i][:-5]))
+        new_data = ""
+        for element in duration[i]:
+            if  48 <= ord(element) and ord(element) <= 57:
+                new_data += element
+        new_duration.append(float(new_data))
 
     return new_duration
 

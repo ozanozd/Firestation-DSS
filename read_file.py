@@ -145,9 +145,9 @@ def read_query_file(filename):
 
     #Fill the variables usign excel data
     for i in range(len(worksheet)):
-        from_districts.append(worksheet_1.iloc[i , 0])
-        to_districts.append(worksheet_1.iloc[i , 1])
-        duration.append(worksheet_1.iloc[i , 2])
+        from_district.append(worksheet.iloc[i , 0])
+        to_district.append(worksheet.iloc[i , 1])
+        duration.append(worksheet.iloc[i , 2])
 
     return from_district , to_district , duration
 
@@ -175,7 +175,8 @@ def combine_queries(length_of_appropriate_pairs):
             d_excel_file = pd.ExcelFile(full_path + "/" + filename)
             worksheet_1 = d_excel_file.parse('Sheet1' , header = None)
             for i in range(len(worksheet_1)):
-                combined_data_points[i].append(worksheet_1.iloc[i,2])
+                if worksheet_1.iloc[i,2] != 0 :
+                    combined_data_points[i].append(worksheet_1.iloc[i,2])
         else:
             print("You are not a excel file dute.")
 

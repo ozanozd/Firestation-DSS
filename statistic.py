@@ -1,86 +1,63 @@
-import pandas as pd
-
-import write_excel as writer
-
-dist_names = [ 'alpha', 'anglit', 'arcsine', 'beta', 'betaprime', 'bradford', 'burr', 'chi', 'chi2', 'cosine', 'dgamma', 'dweibull', 'erlang', 'expon', 'exponweib', 'exponpow', 'f', 'fatiguelife',
-'fisk', 'foldcauchy', 'foldnorm', 'frechet_r', 'frechet_l', 'genlogistic', 'genpareto', 'genexpon', 'genextreme', 'gausshyper', 'gamma', 'gengamma', 'genhalflogistic', 'gilbrat', 'gompertz', 'gumbel_r', 'gumbel_l', 'halfcauchy', 'halflogistic', 'halfnorm', 'hypsecant', 'invgamma', 'invgauss', 'invweibull', 'johnsonsb',
- 'johnsonsu', 'ksone', 'kstwobign', 'laplace', 'logistic', 'loggamma', 'loglaplace', 'lognorm', 'lomax', 'maxwell', 'mielke', 'nakagami', 'ncx2', 'ncf', 'nct', 'norm', 'pareto', 'pearson3', 'powerlaw', 'powerlognorm', 'powernorm', 'rdist', 'reciprocal', 'rayleigh', 'rice',
-  'recipinvgauss', 'semicircular', 't', 'triang', 'truncexpon', 'truncnorm', 'tukeylambda', 'uniform', 'vonmises', 'wald', 'weibull_min', 'weibull_max', 'wrapcauchy']
-"""
-from fitter import Fitter
-
-def fit_dist(number_array)::
-    This function takes a number_array which consists of number then it returns the distribution which it fits to this number
-    f = Fitter(number_array)
-    f.fit()
-    #f.summary()
-    f.get_best()
-"""
-import scipy
-import scipy.stats
-
-import matplotlib
-import matplotlib.pyplot as plt
-class Distribution(object):
-
-    def __init__(self,dist_names_list = []):
-        self.dist_names = dist_names_list
-        self.dist_results = []
-        self.params = {}
-
-        self.DistributionName = ""
-        self.PValue = 0
-        self.Param = None
-
-        self.isFitted = False
+import write_file as writer
+import scipy.stats as sta
 
 
-    def Fit(self, y):
-        self.dist_results = []
-        self.params = {}
-        for dist_name in self.dist_names:
-            dist = getattr(scipy.stats, dist_name)
-            param = dist.fit(y)
 
-            self.params[dist_name] = param
-            #Applying the Kolmogorov-Smirnov test
-            D, p = scipy.stats.kstest(y, dist_name, args=param);
-            self.dist_results.append((dist_name,p))
-            #print(dist_name , p)
 
-        #select the best fitted distribution
-        sel_dist,p = (max(self.dist_results,key=lambda item:item[1]))
-        #store the name of the best fit and its p value
-        self.DistributionName = sel_dist
-        self.PValue = p
+DIST_NAMES =    [ 'beta' ,  'expon' , 'gamma' , 'johnsonsb' , 'johnsonsu' ,  'norm' , 'triang' ,  'uniform'                ,
+                  'weibull_min' , 'weibull_max' ]
+DISTRIBUTIONS = [ sta.beta ,  sta.expon , sta.gamma , sta.johnsonsb , sta.johnsonsu , sta.norm , sta.triang , sta.uniform ,
+                  sta.weibull_min , sta.weibull_max , sta.wrapcauchy]
 
-        self.isFitted = True
-        return self.DistributionName,self.PValue
+def find_best_fit(data):
+    """
+    This function find the best fitting distrubiton for given data.
+    It takes 1 argument:
+        i)  data                 : A list   , which contains floating points numbers
+    It return 2 variables:
+        i)  params               : A tuple  , which contains parameters of the best fitting distribution
+        ii) name_of_distribution : A string , which is the name of the best fitting distribution
+    """
+    for i in range(len(data)):
+        data[i] = float(data[i])
+    #Initialize Variables
+    p_values = []
+    params = []
+    for i in range(len(DIST_NAMES)):
+        pars = DISTRIBUTIONS[i].fit(data)
+        kstest_sta , p_val  = sta.kstest(data , DIST_NAMES[i] , pars)
+        p_values.append(p_val)
+        params.append(pars)
 
-    def Random(self, n = 1):
-        if self.isFitted:
-            dist_name = self.DistributionName
-            param = self.params[dist_name]
-            #initiate the scipy distribution
-            dist = getattr(scipy.stats, dist_name)
-            return dist.rvs(*param[:-2], loc=param[-2], scale=param[-1], size=n)
-        else:
-            raise ValueError('Must first run the Fit method.')
+    temp_max = float('-inf')
+    index = 0
+    for i in range(len(p_values)):
+        if p_values[i] > temp_max :
+            temp_max = p_values[i]
+            index = i
 
-    def Plot(self,y):
-        x = self.Random(n=len(y))
-        plt.hist(x, alpha=0.5, label='Fitted')
-        plt.hist(y, alpha=0.5, label='Actual')
-        plt.legend(loc='upper right')
-"""
-our_dist = Distribution(dist_names_list = dist_names)
-file = open("SimitciData.txt" , 'r')
-content = file.read()
-content_list = content.split()
-for i in range(len(content_list)):
-    content_list[i] = float(content_list[i])
-dist_name , p_value = our_dist.Fit(content_list)
-print(dist_name)
-print(p_value)
-print(our_dist.params[dist_name])
-"""
+    return params[index] , DIST_NAMES[index]
+
+
+def run():
+    """
+    This function takes all the queries corresponds the appropriate pairs then find the best fitting distribution for each pair in the appropriate_pairs.
+    """
+    names_of_district , x_coordinates , y_coordinates , from_district , to_district , distances = writer.reader.read_district_file()
+    print("Step1 Done")
+    appropriate_pairs = writer.reader.util.get_appropriate_pairs(from_district , to_district , distances , 7000)
+    print("Step2 Done")
+    all_query_results = writer.reader.combine_queries(len(appropriate_pairs))
+    print("Step3 Done")
+
+    params = []
+    dist_names = []
+    for i in range(len(all_query_results)) :
+        if i % 100 == 0 :
+            print("We finished" , i , "appropriate_pairs.")
+        param , dist_name = find_best_fit(all_query_results[i])
+        params.append(param)
+        dist_names.append(dist_name)
+    writer.write_distributions(params , dist_names)
+    print("Sey oldu bisiy oldu baska bisiy oldu.")
+run()
