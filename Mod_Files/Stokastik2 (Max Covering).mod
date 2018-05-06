@@ -15,6 +15,7 @@ float covered[to_range][scenario]=...;
 
 // Decision Variables
 dvar boolean y[from_range]; //if there is a station to be opened, takes value 1 for an element of from_range, 0 otherwise
+// dvar boolean a [from_range][to_range][scenario]; Can be used for other method
 
 //Model
 maximize sum (j in to_range, k in scenario)covered[j][k];
