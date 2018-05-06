@@ -16,6 +16,7 @@ float f_cost[from_range]=...; //station cost matrix
 // Decision Variables
 dvar boolean y[from_range]; //if there is a station to be opened, takes value 1 for an element of from_range, 0 otherwise
 dvar boolean s[to_range][scenario]; // if the constraint can be satisfied 1, otherwise 0.
+// dvar boolean a [from_range][to_range][scenario]; Can be used for other method
 
 //Model
 minimize sum (i in from_range)f_cost[i]*y[i];
