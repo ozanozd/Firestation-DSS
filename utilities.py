@@ -56,6 +56,33 @@ def get_appropriate_pairs(from_district , to_district , distance , threshold):
 
     return pair_array
 
+def get_appropriate_pairs_da(from_district , to_district , distance , threshold):
+    """
+    This function returns the pair of districts such that the distance between them is less than threshold returns it.
+    If dist(district_a , district_b ) < threshold and district_a < district_b the list only contains (district_a , district_b).
+    It takes 4 arguments:
+        i)   from_district(list) : It contains all from_district id's
+        ii)  to_district(list)   : It contains all to_district   id's
+        iii) distances(list)     : It contains all the distances(m)
+        iv)  threshold(integer)  : If the distance between two district is greater than threshold distance , do not ask the query.
+    It returns 1 variable:
+        i)   pair_array          : A list , consisting of all the appropriate pairs
+    """
+
+    pair_array = []
+    #Iterate over all enties
+    for i in range(len(distance)) :
+        district_1 = from_district[i]
+        district_2 = to_district[i]
+
+        #We found an appropriate pair if the following if statement is satisfied
+        if distance[i] <= threshold :
+            pair_array.append([district_1 , district_2])
+
+    return pair_array
+
+
+
 def clean_query(duration):
     """
     This takes duration list which consists of durations such as 8 mins etc. then it converts them to float(8)
@@ -117,7 +144,7 @@ def generate_availability_matrix(from_district , to_district , distance , thresh
         print("The number of columns in availability_matrix is " , len(availability_matrix[0]))
 
 
-    pair_array = get_appropriate_pairs(from_district , to_district , distance , threshold)
+    pair_array = get_appropriate_pairs_da(from_district , to_district , distance , threshold)
 
     if IS_DEBUG == True:
         print("The number of availabile pairs is" , len(pair_array))

@@ -14,9 +14,10 @@ full_path = current_directory + "/Mode_Files/" + "BaseModel.mod"
 #context.solver.docloud.key = CPLEX_API_KEY
 
 client = JobClient(CPLEX_BASE_URL, CPLEX_API_KEY)
-resp = client.execute(input = [ "availability_matrix_7000.xlsx",
-                                "Mod_Files/BaseModel.mod" ],
+resp = client.execute(input = [ "Mod_Files/BaseModel.mod",
+                                "Mod_Files/BaseModel.dat"],
                           output = "haaaaati.txt")
+print("Sey oldu bisiy oldu baska bisiy oldu.")
 """
 mdl = Model(name="Haydi_Bakalim" , context = )
 

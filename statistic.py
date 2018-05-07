@@ -52,12 +52,12 @@ def run():
 
     params = []
     dist_names = []
-    for i in range(len(all_query_results)) :
+    for i in range(len(appropriate_pairs)) :
         if i % 100 == 0 :
             print("We finished" , i , "appropriate_pairs.")
         param , dist_name = find_best_fit(all_query_results[i])
         params.append(param)
         dist_names.append(dist_name)
-    writer.write_distributions(params , dist_names)
+    writer.write_distributions(dist_names , params)
     print("Sey oldu bisiy oldu baska bisiy oldu.")
 run()

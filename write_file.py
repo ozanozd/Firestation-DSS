@@ -110,6 +110,29 @@ def write_availability_matrix_excel(availability_matrix , threshold):
         for k in range(reader.util.NUMBER_OF_DISTRICT) :
             worksheet.write(row + i , col + k  , availability_matrix[i][k])
 
+def write_dat(availability_matrix , fixed_cost):
+    """
+    This function creates .dat file for cplex_cloud.
+    This function takes 2 arguments:
+        i)  availability_matrix : A list of list , which contains binary values that represents whether a particular district is covered by another district
+        ii) threshold           : An integer     , which indicated whether 2 districts are in appropriate_pairs or not.
+    This function returns nothing.
+    """
+    file = open("BaseModel.txt" , 'w')
+    file.write("Num_Districts = 867;\n")
+    file.write("a=[")
+    for k in range(len(availability_matrix)) :
+        file.write("[")
+        for i in range(len(availability_matrix[k]) - 1):
+            file.write(str(availability_matrix[k][i]) + ",")
+        file.write(str(availability_matrix[k][len(availability_matrix[k]) - 1]) + "],\n")
+    file.write(";\n")
+    file.write("fixed_cost=[")
+    for element in fixed_cost:
+        file.write(str(element) + "," )
+    file.write("];")
+    file.close()
+
 def write_new_data(filename , from_districts , to_districts , new_values) :
     """
     This function writes new queries.
@@ -168,12 +191,17 @@ def write_distributions(dist_names , params):
     worksheet.write(0 , 1 , "Parameters")
     for i in range(len(dist_names)):
         worksheet.write(i + 1 , 0 , dist_names[i])
-        worksheet.write(i + 1 , 1 , params[i])
+        for k in range(len(params[i])) :
+            worksheet.write(i + 1 , k+1 , params[i][k])
 
     workbook.close()
 def run():
     """
     Look at the name of the function and guess its purpose..
     """
-    clean_rewrite_data()
+    name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance = reader.read_district_file()
+    availability_matrix = reader.util.generate_availability_matrix(from_district , to_district , distance , 7000)
+    fixed_cost = reader.util.generate_fixed_cost_array()
+    write_dat(availability_matrix , fixed_cost)
+    print("Sey oldu bisiy oldu baska bisiy oldu")
 #run()
