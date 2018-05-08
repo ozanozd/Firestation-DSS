@@ -195,6 +195,12 @@ def write_distributions(dist_names , params):
             worksheet.write(i + 1 , k+1 , params[i][k])
 
     workbook.close()
+
+def write_new_ids(new_id):
+    """
+    This function writes new_ids of district to txt file.
+    """
+
 def run():
     """
     Look at the name of the function and guess its purpose..

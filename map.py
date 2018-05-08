@@ -62,9 +62,11 @@ def add_polygon(lats , longs , availability_matrix ,  solution_array):
         iii) solution_array      : A list , which contains binary_values that represent whether we will open a fire station in ith district or not
     It return nothing
     """
-    color_index = 0 
-    for i in range(reader.util.VIS_NUMBER_OF_DISTRICT) :
-        if solution_array[i % reader.util.NUMBER_OF_DISTRICT] == 1 :
+    color_index = 0
+    for i in range(reader.util.NUMBER_OF_DISTRICT) :
+        if solution_array[i] == 1 :
+            for j in range(reader.util.NUMBER_OF_DISTRICT):
+
 
 
 def run():

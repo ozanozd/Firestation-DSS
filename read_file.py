@@ -184,9 +184,13 @@ def combine_queries(length_of_appropriate_pairs):
 
 def read_new_district_names(filename):
     """
-    This function reads the x-y data of polygon coordinates and return it as a list of lists.
+    This function gives new_district_names
     """
-    all_data = pd.ExcelFile(filename)
+
+    current_directory = util.get_current_directory()
+    full_path = current_directory + "/Coords/" + filename
+
+    all_data = pd.ExcelFile(full_path)
     worksheet_1 = all_data.parse('Sheet1')
 
     #Get the columns into columns
@@ -253,6 +257,41 @@ def polygon_coords(filename):
             longs[int(id_district[i]/10)].append(y_district[i])
 
     return lat,longs
+
+def read_distribution():
+    """
+    This function reads distribution file and returns name_of_distribution and parameters_of_distribution
+    It takes no arguments.
+    It returns 2 variables:
+        i) name_of_distribution        : A list , which consists of names of distributions
+        ii) parameters_of_distribution : A list , which consists of parameters of distributions
+    """
+    #Initialize variables
+    name_of_distribution = []
+    parameters_of_distribution = []
+
+    four_parameter_dists = ["beta" , "johnsonsb" , "johnsonsu"]
+    three_parameter_dists = ["gamma" , "weibull_min" , "weibull_max" , "triang"]
+    two_parameter_dists = ["expon" , "norm" , "uniform"]
+
+
+    d_excel_file = pd.ExcelFile("distribution_fit.xlsx")
+    worksheet = d_excel_file.parse('Sheet1' , header = None)
+    for i in range(len(worksheet)):
+        parameters_of_distribution.append([])
+        current_name = worksheet.iloc[i,0]
+        name_of_distribution.append(current_name)
+        if current_name in four_parameter_dists :
+            upper_index = 5
+        elif current_name in three_parameter_dists :
+            upper_index = 4
+        elif current_name in two_parameter_dists :
+            upper_index = 3
+        for k in range(1,upper_index):
+            parameters_of_distribution[i].append(worksheet.iloc[i , k])
+
+    return name_of_distribution , parameters_of_distribution
+
 def test():
     """
     Tests the above function
@@ -268,9 +307,7 @@ def run():
     """
     Run the application
     """
-    #clean_rewrite_data("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
-    #read_binary_txt('solution.txt')
-    #get_detailed_array("C:/Users/Ywestes/Desktop/Can/SabanciUniv/Year 4/ENS 491/Fire Station Location Codes/Firestation-DSS/DenemeExcel")
-    #coord_read("temp-attributes.xlsx")
-    polygon_coords("temp-nodes.xlsx")
-#run()
+    name_of_distribution , parameters_of_distribution = read_distribution()
+    for i in range(5):
+        print(name_of_distribution[i] , parameters_of_distribution[i])
+run()

@@ -166,3 +166,52 @@ def generate_fixed_cost_array():
     for i in range(NUMBER_OF_DISTRICT) :
         fixed_cost_array.append(1)
     return fixed_cost_array
+
+def get_rid_of_turkish_characters(new_district_names):
+    """
+    """
+    new_names = []
+    TURKISH_CHARACTERS = [ "Ç" , "Ğ" , "İ" , "Ö" , "Ş" , "Ü"]
+    REPLACEMENTS = ["C" , "G" , "I" , "O" , "S" , "U"]
+    for i in range(len(new_district_names)):
+        current_word = new_district_names[i]
+        new_string = ""
+        for j in range(len(current_word)):
+            if current_word[j] in TURKISH_CHARACTERS :
+                index = TURKISH_CHARACTERS.index(current_word[j])
+                new_string += REPLACEMENTS[index]
+            else:
+                new_string += current_word[j]
+        new_names.append(new_string)
+
+    return new_names
+
+def get_in_old_not_in_new(old_district_names , new_district_names):
+    """
+    """
+    list_A = []
+    for element in old_district_names :
+        if element not in new_district_names:
+            list_A.append(element)
+    return list_A
+
+def get_in_new_not_in_old(old_district_names , new_district_names):
+    """
+    """
+    list_B = []
+    for element in new_district_names :
+        if element not in old_district_names:
+            list_B.append(element)
+    return list_B
+def get_new_ids(old_district_names , new_district_names):
+    """
+    """
+    new_ids = []
+    for i in range(len(old_district_names)) :
+        current_district_name = old_district_names[i]
+        if current_district_name in new_district_names :
+            index = new_district_names.index(current_district_name)
+            new_ids.append(index)
+        else:
+            print(old_district_names[i] , i)
+    return new_ids

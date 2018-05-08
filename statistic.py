@@ -38,10 +38,30 @@ def find_best_fit(data):
 
     return params[index] , DIST_NAMES[index]
 
-
-def run():
+def generate_random_number(dist_name , param):
     """
-    This function takes all the queries corresponds the appropriate pairs then find the best fitting distribution for each pair in the appropriate_pairs.
+    This function generates one random number from the dist_name with param parameters
+    """
+    index = DIST_NAMES.index(dist_name)
+    if len(param) == 2:
+        arg1 = param[0]
+        arg2 = param[1]
+        return DISTRIBUTIONS[index].rvs(arg1 , arg2)
+    if len(param) == 3:
+        arg1 = param[0]
+        arg2 = param[1]
+        arg3 = param[2]
+        return DISTRIBUTIONS[index].rvs(arg1 , arg2 , arg3)
+    if len(param) == 4:
+        arg1 = param[0]
+        arg2 = param[1]
+        arg3 = param[2]
+        arg4 = param[3]
+        return DISTRIBUTIONS[index].rvs(arg1 , arg2 , arg3 , arg4)
+
+
+def test():
+    """
     """
     names_of_district , x_coordinates , y_coordinates , from_district , to_district , distances = writer.reader.read_district_file()
     print("Step1 Done")
@@ -60,4 +80,13 @@ def run():
         dist_names.append(dist_name)
     writer.write_distributions(dist_names , params)
     print("Sey oldu bisiy oldu baska bisiy oldu.")
+
+
+def run():
+    """
+    This function takes all the queries corresponds the appropriate pairs then find the best fitting distribution for each pair in the appropriate_pairs.
+    """
+    dist_names , parameters_of_distribution = writer.reader.read_distribution()
+    for i in range(10):
+        print(generate_random_number(dist_names[i] , parameters_of_distribution[i]))
 run()
