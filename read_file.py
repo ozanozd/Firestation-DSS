@@ -292,6 +292,29 @@ def read_distribution():
 
     return name_of_distribution , parameters_of_distribution
 
+def read_availability_matrix(filename):
+    """
+    This function reads filename.xlsx and returns availability matrix.
+    """
+
+    #Get full path using current_directory
+    current_directory = reader.util.get_current_directory()
+    full_path = current_directory + "/Availability_Matrix/" + filename
+
+    #Open excel file to write
+    excel_file = pd.ExcelFile(fullpath)
+    worksheet = excel_file.parse('Sheet1' , header = None)
+
+    #Initialize availability_matrix
+    availability_matrix = []
+
+    for i in range(len(worksheet)):
+        availability_matrix.append([])
+        for k in range(util.NUMBER_OF_DISTRICT) :
+            availability_matrix[i].append(worksheet.iloc[i][k])
+
+    return availability_matrix
+
 def read_cloud_solution(filename):
     """
     This function reads solution of the optimization problem which is solved by cplex_cloud

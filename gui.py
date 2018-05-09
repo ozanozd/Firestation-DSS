@@ -20,6 +20,39 @@ import map
 HEIGHT = 400
 WIDTH = 415
 
+def check_availability_matrix(from_district , to_district , distance , threshold):
+    """
+    This function check whether a Availability_Matrix_threshold.xlsx exists or not.
+    If it does not exists it creates it  and write it to excel and returns it.
+    Otherwise it read it and returns it
+    """
+    current_directory = solver.writer.reader.util.get_current_directory()
+    file_name = "availability_matrix_" + str(threshold) + ".xlsx"
+    full_path = current_directory + "/Availability_Matrix/" + file_name
+    if os.path.isfile(full_path) == True:
+        print(file_name , "is already exists.")
+        availability_matrix = solver.writer.reader.read_availability_matrix(file_name)
+        return availability_matrix
+    else:
+        print(file_name , "does not exist.")
+        availability_matrix = solver.writer.reader.util.generate_availability_matrix(from_district , to_district , distance , threshold)
+        solver.writer.write_availability_matrix_excel(availability_matrix , threshold)
+        return availability_matrix
+
+
+def check_dat_file(file_name):
+    """
+    This function checks whether filename.dat file exist or not.
+    If it exists then use it , otherwise write it then use it
+    """
+    current_directory = solver.writer.reader.util.get_current_directory()
+    full_path = current_directory + "/Mod_Files/" + file_name
+
+    if os.path.isfile(full_path) == True:
+        
+    else :
+
+
 class MainApplication:
     def __init__(self , master):
         self.master = master
@@ -142,9 +175,10 @@ class MainApplication:
         choice = self.radio_button_var.get()
 
         #Run solver accordingly
+
         name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance = solver.writer.reader.read_district_file()
         print("District file is read")
-        availability_matrix = solver.writer.reader.util.generate_availability_matrix(from_district , to_district , distance , threshold)
+        availability_matrix = check_availability_matrix(from_district , to_district , distance , threshold)
         print("Availability_Matrix is created")
         fixed_cost = solver.writer.reader.util.generate_fixed_cost_array()
         print("Fixed_cost is created")
@@ -155,7 +189,7 @@ class MainApplication:
         solution_array = solver.writer.reader.read_cloud_solution(file_name)
         print("Solution array is read")
         map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance)
-
+        """
 
         ## TODO: Input chech
         #map.run()
