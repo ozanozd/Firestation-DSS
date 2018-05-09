@@ -292,6 +292,31 @@ def read_distribution():
 
     return name_of_distribution , parameters_of_distribution
 
+def read_cloud_solution(filename):
+    """
+    This function reads solution of the optimization problem which is solved by cplex_cloud
+    """
+    current_directory = util.get_current_directory()
+    full_path = current_directory + "/" + filename
+
+    solution_file = open(full_path , 'r')
+    content = solution_file.read()
+
+    is_solution_start = False
+    is_solution_end = False
+    solution_array = []
+
+    for i in range(len(content)) :
+        if content[i : i + 5] == "y = [" :
+            is_solution_start = True
+        if is_solution_start == True and is_solution_end == False :
+            if 48 <= ord(content[i]) <= 49 :
+                solution_array.append(int(content[i]))
+
+        if is_solution_start == True and content[i] == "]" :
+            is_solution_end = True
+
+    return solution_array
 def test():
     """
     Tests the above function

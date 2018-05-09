@@ -110,7 +110,7 @@ def write_availability_matrix_excel(availability_matrix , threshold):
         for k in range(reader.util.NUMBER_OF_DISTRICT) :
             worksheet.write(row + i , col + k  , availability_matrix[i][k])
 
-def write_dat(availability_matrix , fixed_cost):
+def write_dat(availability_matrix , fixed_cost , threshold):
     """
     This function creates .dat file for cplex_cloud.
     This function takes 2 arguments:
@@ -118,7 +118,8 @@ def write_dat(availability_matrix , fixed_cost):
         ii) threshold           : An integer     , which indicated whether 2 districts are in appropriate_pairs or not.
     This function returns nothing.
     """
-    file = open("BaseModel.dat" , 'w')
+
+    file = open("Mod_Files/BaseModel_" + str(threshold) + ".dat" , 'w')
     file.write("Num_Districts = 867;\n")
     file.write("a=[")
     for k in range(len(availability_matrix)) :
@@ -239,4 +240,4 @@ def run():
     fixed_cost = reader.util.generate_fixed_cost_array()
     write_dat(availability_matrix , fixed_cost)
     print("Sey oldu bisiy oldu baska bisiy oldu")
-run()
+#run()

@@ -26,31 +26,29 @@ class MainApplication:
         self.canvas = tk.Canvas(master , height = HEIGHT , width = WIDTH)
 
         # Define labels for Radiobuttons and Checkbuttons , threshold
-        self.label_left = tk.Label(self.canvas , text = "Model Extension")
-        self.label_right = tk.Label(self.canvas , text = "Model Type")
+        self.label_model= tk.Label(self.canvas , text = "Models")
         self.label_threshold = tk.Label(self.canvas , text = "Threshold(m)")
 
         # Define user entries
         self.user_entry_box = tk.Entry(self.canvas , font = ("Calibri" , 12))
-        self.user_threshold_entry = tk.Entry(self.canvas , text = "Threshold" ,  font = ("Calibri" , 12))
+        self.user_threshold_entry = tk.Entry(self.canvas , text = "Threshold" ,  font = ("Calibri" , 12) , state = tk.DISABLED)
 
         # Define buttons
         self.load_button = tk.Button(self.canvas , text = "Load"  , command = lambda: load_file(user_entry_box))
         self.select_button = tk.Button(self.canvas , text = "Select")
         self.runmap_button = tk.Button(self.canvas , text = "Run Map" , command =  self.run_map)
 
-        # Define checkbuttons
-        self.capacity_checkbutton = tk.Checkbutton(self.canvas , text = "Capacity")
-        self.traffic_checkbutton = tk.Checkbutton(self.canvas , text = "Traffic")
-        self.risk_checkbutton = tk.Checkbutton(self.canvas , text = "Risk Factors")
-
         # Initialize radiobuttons as all of them are unselected
         self.radio_button_var = tk.IntVar()
         self.radio_button_var.set(2356)
 
         # Define radio_buttons
-        self.single_coverage_radiobutton = tk.Radiobutton(self.canvas , text = "Single Coverage" , value = 1 , variable = self.radio_button_var)
-        self.multi_coverage_radiobutton = tk.Radiobutton(self.canvas , text = "Multi Coverage" , value = 2 , variable = self.radio_button_var)
+        self.single_coverage_radiobutton = tk.Radiobutton(self.canvas , text = "Base Model" , value = 1 , variable = self.radio_button_var , command = self.select_base_model)
+        self.multi_coverage_radiobutton = tk.Radiobutton(self.canvas , text = "Multicoverage Model" , value = 2 , variable = self.radio_button_var , command = self.select_multi_coverage)
+        self.maximum_coverage_radiobutton = tk.Radiobutton(self.canvas , text = "Maximum Coverage Model" , value = 3 , variable = self.radio_button_var , command = self.select_maximum_coverage)
+        self.base_model_diff_cost_radiobutton = tk.Radiobutton(self.canvas , text = "Base Model with different cost" , value = 4 , variable = self.radio_button_var , command = self.select_base_model_diff_cost)
+        self.stochastic_coverage_radiobutton = tk.Radiobutton(self.canvas , text = "Stochastic Coverage Model" , value = 5 , variable = self.radio_button_var , command = self.select_stochastic_coverage)
+        self.stochastic_maximum_coverage_radiobutton = tk.Radiobutton(self.canvas , text = "Stochastic Maximum Coverage Model" , value = 6 , variable = self.radio_button_var , command = self.select_stochastic_maximum_coverage)
 
 
         # Place them
@@ -60,14 +58,13 @@ class MainApplication:
         self.load_button.place(x = 350 , y = 10 , height = 30)
         self.select_button.place(x = 300 , y = 10 , height = 30)
 
-        self.label_left.place(x = 50 , y = 60)
-        self.capacity_checkbutton.place(x = 50 , y = 90)
-        self.traffic_checkbutton.place(x = 50 , y = 110)
-        self.risk_checkbutton.place(x = 50 , y = 130)
-
-        self.label_right.place(x = 250 , y = 60)
-        self.single_coverage_radiobutton.place(x = 250 , y = 90)
-        self.multi_coverage_radiobutton.place(x = 250 , y = 110)
+        self.label_model.place(x = 50 , y = 60)
+        self.single_coverage_radiobutton.place(x = 50 , y = 85)
+        self.multi_coverage_radiobutton.place(x = 50 , y = 110)
+        self.maximum_coverage_radiobutton.place(x = 50 , y = 135)
+        self.base_model_diff_cost_radiobutton.place(x = 50 , y = 160)
+        self.stochastic_coverage_radiobutton.place(x = 50 , y = 185)
+        self.stochastic_maximum_coverage_radiobutton.place(x = 50 , y = 210)
 
         self.runmap_button.place(x = 180 ,  y = 350)
         self.canvas.pack()
@@ -83,8 +80,85 @@ class MainApplication:
             return False
 
         return True
+
+    def active_user_threshold_entry(self):
+        """
+        This function activates user_threshold_entry
+        """
+        print("User threshold entry activated.")
+        self.user_threshold_entry.configure(state = tk.NORMAL)
+
+    def deactive_user_threshold_entry(self):
+        """
+        This function activates user_threshold_entry
+        """
+        print("User threshold entry deactivated.")
+        self.user_threshold_entry.configure(state = tk.DISABLED)
+
+    def select_base_model(self):
+        """
+        """
+        print("We selected Base Model")
+        print(self.radio_button_var.get())
+        self.active_user_threshold_entry()
+
+    def select_multi_coverage(self):
+        """
+        """
+        print("We selected Multi Coverage")
+        self.active_user_threshold_entry()
+
+    def select_maximum_coverage(self):
+        """
+        """
+        print("We selected Maximum Coverage")
+        self.active_user_threshold_entry()
+
+    def select_base_model_diff_cost(self):
+        """
+        """
+        print("We selected Base Model Diff Cost")
+        self.active_user_threshold_entry()
+
+    def select_stochastic_coverage(self):
+        """
+        """
+        print("We selected Stochastic Coverage")
+        self.deactive_user_threshold_entry()
+
+    def select_stochastic_maximum_coverage(self):
+        """
+        """
+        print("We selected Stochastic Maximum Coverage")
+        self.deactive_user_threshold_entry()
+
     def run_map(self):
-        map.run()
+        """
+        Run the map with given user choices
+        """
+
+        #Get threshold and selected model number
+        threshold = int(self.user_threshold_entry.get())
+        choice = self.radio_button_var.get()
+
+        #Run solver accordingly
+        name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance = solver.writer.reader.read_district_file()
+        print("District file is read")
+        availability_matrix = solver.writer.reader.util.generate_availability_matrix(from_district , to_district , distance , threshold)
+        print("Availability_Matrix is created")
+        fixed_cost = solver.writer.reader.util.generate_fixed_cost_array()
+        print("Fixed_cost is created")
+        solver.writer.write_dat(availability_matrix , fixed_cost , threshold)
+        print(".dat file is created")
+        file_name = solver.run(choice , threshold)
+        print("Solver solved and txt is created.")
+        solution_array = solver.writer.reader.read_cloud_solution(file_name)
+        print("Solution array is read")
+        map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance)
+
+
+        ## TODO: Input chech
+        #map.run()
 
         #if self.check_validity_threshold() == False :
         #    messagebox.showerror("Wrong type!" , "Please enter an integer value.")
@@ -97,6 +171,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 def load_file(user_entry_box):
     """

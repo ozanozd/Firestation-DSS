@@ -10,39 +10,51 @@ import write_file as writer
 
 current_directory = writer.reader.util.get_current_directory()
 full_path = current_directory + "/Mode_Files/" + "BaseModel.mod"
-#context.solver.docloud.url = CPLEX_BASE_URL
-#context.solver.docloud.key = CPLEX_API_KEY
 
-client = JobClient(CPLEX_BASE_URL, CPLEX_API_KEY)
-resp = client.execute(input = [ "Mod_Files/BaseModel.mod",
-                                "Mod_Files/BaseModel.dat"],
-                          output = "haaaaati.txt")
-print("Sey oldu bisiy oldu baska bisiy oldu.")
-"""
-mdl = Model(name="Haydi_Bakalim" , context = )
+def run(choice , threshold):
+    client = JobClient(CPLEX_BASE_URL, CPLEX_API_KEY)
 
+    if choice == 1:
+        resp = client.execute(input = [ "Mod_Files/BaseModel.mod",
+                                "Mod_Files/BaseModel_" + str(threshold) + ".dat"],
+                                output = "Solutions/BaseModel_Sol_" + str(threshold) + ".txt")
 
-Num_Districts = 7;
-a = [[1,1,0,1,0,0,1],
-[1,1,0,0,1,1,1],
-[0,0,1,1,1,1,0],
-[0,0,1,1,0,0,1],
-[0,1,1,0,1,1,0],
-[0,1,1,0,1,1,0],
-[1,1,0,1,0,0,1]]
+        return "Solutions/BaseModel_Sol_" + str(threshold) + ".txt"
 
-f_cost = [1000,800,1200,1100,900,900,1100]
+    if choice == 2:
+        resp = client.execute(input = [ "Mod_Files/MultiCoverage.mod",
+                                "Mod_Files/MultiCoverage_" + str(threshold) + ".dat"],
+                                output = "Solutions/MultiCoverage_Sol_" + str(threshold) + ".txt")
 
-y = {d: mdl.binary_var(name="y"+str(d)) for d in range(1,Num_Districts+1)}
+        return "Solutions/MultiCoverage_Sol_" + str(threshold) + ".txt"
+    if choice == 3:
 
-for j in range(1,Num_Districts+1):
-    z=mdl.sum(y[i]*a[i-1][j-1] for i in range(1,Num_Districts+1))
-    mdl.add_constraint(1<=mdl.sum(a[i-1][j-1]*y[i] for i in range(1,Num_Districts+1)))
+        resp = client.execute(input = [ "Mod_Files/MaxCoverage.mod",
+                                "Mod_Files/MaxCoverage_" + str(threshold) + ".dat"],
+                                output = "Solutions/MaxCoverage_Sol_" + str(threshold) + ".txt")
 
-mdl.minimize(mdl.sum(y[i]*f_cost[i-1] for i in range(1,Num_Districts+1)))
+        return "Solutions/MaxCoverage_Sol_" + str(threshold) + ".txt"
 
-if not mdl.solve():
-    print("*** Problem has no solution")
-else:
-    mdl.print_solution()
-"""
+    if choice == 4:
+        resp = client.execute(input = [ "Mod_Files/BaseModel.mod",
+                                "Mod_Files/BaseModelFixedCost_" + str(threshold) + ".dat"],
+                                output = "Solutions/BaseModelFixedCost_Sol" + str(threshold) + ".txt")
+
+        return "Solutions/BaseModelFixedCost_Sol" + str(threshold) + ".txt"
+
+    if choice == 5:
+        resp = client.execute(input = [ "Mod_Files/StochasticCoverage.mod",
+                                "Mod_Files/StochasticCoverage.dat"],
+                                output = "Solutions/StochasticCoverage_Sol.txt")
+
+        return "Solutions/StochasticCoverage_Sol.txt"
+
+    if choice == 6:
+        resp = client.execute(input = [ "Mod_Files/StochasticMaxCoverage.mod",
+                                "Mod_Files/StochasticMaxCoverage.dat"],
+                                output = "Solutions/StochasticMaxCoverage_Sol.txt")
+
+        return "Solutions/StochasticMaxCoverage_Sol.txt"
+    print("Sey oldu bisiy oldu baska bisiy oldu.")
+
+#run()

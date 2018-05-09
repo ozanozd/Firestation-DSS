@@ -62,19 +62,19 @@ def add_polygon(lats , longs , availability_matrix ,  solution_array):
         iii) solution_array      : A list , which contains binary_values that represent whether we will open a fire station in ith district or not
     It return nothing
     """
+    pass
+    """
     color_index = 0
     for i in range(reader.util.NUMBER_OF_DISTRICT) :
         if solution_array[i] == 1 :
             for j in range(reader.util.NUMBER_OF_DISTRICT):
+    """
 
 
-
-def run():
+def run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance):
     """
     This function runs the map and show the correspding html
     """
-    name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance = reader.read_district_file()
-    solution_array = reader.read_binary_txt("solution.txt")
     add_marker(x_coordinates , y_coordinates , name_of_districts , solution_array)
     gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
     lats , longs = reader.polygon_coords("temp-nodes.xlsx")
@@ -84,5 +84,5 @@ def run():
     path = os.path.abspath("last_map.html")
     url = "file://" + path
     webbrowser.open(url)
-
-run()
+    print("Sey oldu bisiy oldu baska bisiy oldu.")
+#run()
