@@ -310,4 +310,4 @@ def run():
     name_of_distribution , parameters_of_distribution = read_distribution()
     for i in range(5):
         print(name_of_distribution[i] , parameters_of_distribution[i])
-run()
+#run()

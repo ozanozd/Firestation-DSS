@@ -118,20 +118,24 @@ def write_dat(availability_matrix , fixed_cost):
         ii) threshold           : An integer     , which indicated whether 2 districts are in appropriate_pairs or not.
     This function returns nothing.
     """
-    file = open("BaseModel.txt" , 'w')
+    file = open("BaseModel.dat" , 'w')
     file.write("Num_Districts = 867;\n")
     file.write("a=[")
     for k in range(len(availability_matrix)) :
         file.write("[")
         for i in range(len(availability_matrix[k]) - 1):
             file.write(str(availability_matrix[k][i]) + ",")
-        file.write(str(availability_matrix[k][len(availability_matrix[k]) - 1]) + "],\n")
-    file.write(";\n")
-    file.write("fixed_cost=[")
-    for element in fixed_cost:
-        file.write(str(element) + "," )
+        file.write(str(availability_matrix[k][len(availability_matrix[k]) - 1]) + "]")
+        if k == len(availability_matrix) - 1 :
+            file.write("];\n")
+        else :
+            file.write(",\n")
+    file.write("f_cost=[")
+    for i in range(len(fixed_cost)):
+        file.write(str(fixed_cost[i]))
+        if i != len(fixed_cost) - 1:
+             file.write(",")
     file.write("];")
-    file.close()
 
 def write_new_data(filename , from_districts , to_districts , new_values) :
     """
@@ -196,11 +200,36 @@ def write_distributions(dist_names , params):
 
     workbook.close()
 
+def write_generated_numbers(random_numbers , fixed_cost):
+    """
+    This function takes a list which consists of 100 lists each of them contains 33000 elements.And write them to txt file
+    """
+    file = open("generated_random_numbers.txt" , 'w')
+    file.write("Num_Districts = 867;\n")
+    file.write("a=[")
+    for k in range(len(random_numbers)) :
+        file.write("[")
+        for i in range(len(random_numbers[k]) - 1):
+            file.write(str(random_numbers[k][i]) + ",")
+        file.write(str(random_numbers[k][len(random_numbers[k]) - 1]))
+        if k == len(random_numbers) - 1:
+            file.write("]]")
+        else:
+            file.write("],\n")
+    file.write(";\n")
+    file.write("f_cost=[")
+    for i in range(len(fixed_cost)):
+        file.write(str(fixed_cost[i]))
+        if i != len(fixed_cost) - 1:
+             file.write(",")
+    file.write("];")
+    file.close()
+
 def write_new_ids(new_id):
     """
     This function writes new_ids of district to txt file.
     """
-
+    pass
 def run():
     """
     Look at the name of the function and guess its purpose..
@@ -210,4 +239,4 @@ def run():
     fixed_cost = reader.util.generate_fixed_cost_array()
     write_dat(availability_matrix , fixed_cost)
     print("Sey oldu bisiy oldu baska bisiy oldu")
-#run()
+run()

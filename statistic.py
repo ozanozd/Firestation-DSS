@@ -1,9 +1,6 @@
 import write_file as writer
 import scipy.stats as sta
 
-
-
-
 DIST_NAMES =    [ 'beta' ,  'expon' , 'gamma' , 'johnsonsb' , 'johnsonsu' ,  'norm' , 'triang' ,  'uniform'                ,
                   'weibull_min' , 'weibull_max' ]
 DISTRIBUTIONS = [ sta.beta ,  sta.expon , sta.gamma , sta.johnsonsb , sta.johnsonsu , sta.norm , sta.triang , sta.uniform ,
@@ -46,18 +43,18 @@ def generate_random_number(dist_name , param):
     if len(param) == 2:
         arg1 = param[0]
         arg2 = param[1]
-        return DISTRIBUTIONS[index].rvs(arg1 , arg2)
+        return int(round(DISTRIBUTIONS[index].rvs(arg1 , arg2)))
     if len(param) == 3:
         arg1 = param[0]
         arg2 = param[1]
         arg3 = param[2]
-        return DISTRIBUTIONS[index].rvs(arg1 , arg2 , arg3)
+        return int(round(DISTRIBUTIONS[index].rvs(arg1 , arg2 , arg3)))
     if len(param) == 4:
         arg1 = param[0]
         arg2 = param[1]
         arg3 = param[2]
         arg4 = param[3]
-        return DISTRIBUTIONS[index].rvs(arg1 , arg2 , arg3 , arg4)
+        return int(round(DISTRIBUTIONS[index].rvs(arg1 , arg2 , arg3 , arg4)))
 
 
 def test():
@@ -86,7 +83,25 @@ def run():
     """
     This function takes all the queries corresponds the appropriate pairs then find the best fitting distribution for each pair in the appropriate_pairs.
     """
+    fixed_cost = writer.reader.util.generate_fixed_cost_array()
     dist_names , parameters_of_distribution = writer.reader.read_distribution()
-    for i in range(10):
-        print(generate_random_number(dist_names[i] , parameters_of_distribution[i]))
+    random_numbers = []
+    for i in range(len(dist_names)):
+        if i % 1000 == 0 :
+            print("We completed" , i , "tasks.")
+        random_numbers.append([])
+        for k in range(100):
+            current_number = generate_random_number(dist_names[i] , parameters_of_distribution[i])
+            max_iter = 0
+            while 0 <= current_number <= 180 and max_iter != 5 :
+                current_number = generate_random_number(dist_names[i] , parameters_of_distribution[i])
+                max_iter += 1
+            if current_number <= 0:
+                random_numbers[i].append(15)
+            elif current_number > 180:
+                random_numbers[i].append(180)
+            else :
+                random_numbers[i].append(current_number)
+    writer.write_generated_numbers(random_numbers , fixed_cost)
+    print("Sey oldu bisiy oldu baska bisiy oldu")
 run()
