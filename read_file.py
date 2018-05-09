@@ -298,11 +298,11 @@ def read_availability_matrix(filename):
     """
 
     #Get full path using current_directory
-    current_directory = reader.util.get_current_directory()
+    current_directory = util.get_current_directory()
     full_path = current_directory + "/Availability_Matrix/" + filename
 
     #Open excel file to write
-    excel_file = pd.ExcelFile(fullpath)
+    excel_file = pd.ExcelFile(full_path)
     worksheet = excel_file.parse('Sheet1' , header = None)
 
     #Initialize availability_matrix

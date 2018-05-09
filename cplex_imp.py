@@ -8,9 +8,6 @@ CPLEX_API_KEY = "api_df058b14-fb2d-4010-9cef-c92cfa379561"
 #Inside project imports
 import write_file as writer
 
-current_directory = writer.reader.util.get_current_directory()
-full_path = current_directory + "/Mode_Files/" + "BaseModel.mod"
-
 def run(choice , threshold):
     client = JobClient(CPLEX_BASE_URL, CPLEX_API_KEY)
 
@@ -37,24 +34,24 @@ def run(choice , threshold):
 
     if choice == 4:
         resp = client.execute(input = [ "Mod_Files/BaseModel.mod",
-                                "Mod_Files/BaseModelFixedCost_" + str(threshold) + ".dat"],
-                                output = "Solutions/BaseModelFixedCost_Sol" + str(threshold) + ".txt")
+                                "Mod_Files/BaseModel_DiffCost_" + str(threshold) + ".dat"],
+                                output = "Solutions/BaseModel_DiffCost_Sol_" + str(threshold) + ".txt")
 
-        return "Solutions/BaseModelFixedCost_Sol" + str(threshold) + ".txt"
+        return "Solutions/BaseModel_DiffCost_Sol" + str(threshold) + ".txt"
 
     if choice == 5:
         resp = client.execute(input = [ "Mod_Files/StochasticCoverage.mod",
-                                "Mod_Files/StochasticCoverage.dat"],
-                                output = "Solutions/StochasticCoverage_Sol.txt")
+                                "Mod_Files/Stochastic_Coverage.dat"],
+                                output = "Solutions/Stochastic_Coverage_Sol.txt")
 
-        return "Solutions/StochasticCoverage_Sol.txt"
+        return "Solutions/Stochastic_Coverage_Sol.txt"
 
     if choice == 6:
         resp = client.execute(input = [ "Mod_Files/StochasticMaxCoverage.mod",
-                                "Mod_Files/StochasticMaxCoverage.dat"],
-                                output = "Solutions/StochasticMaxCoverage_Sol.txt")
+                                "Mod_Files/Stochastic_MaxCoverage.dat"],
+                                output = "Solutions/Stochastic_MaxCoverage_Sol.txt")
 
-        return "Solutions/StochasticMaxCoverage_Sol.txt"
+        return "Solutions/Stochastic_MaxCoverage_Sol.txt"
     print("Sey oldu bisiy oldu baska bisiy oldu.")
 
 #run()

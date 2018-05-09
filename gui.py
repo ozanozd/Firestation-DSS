@@ -45,13 +45,28 @@ def check_dat_file(file_name):
     This function checks whether filename.dat file exist or not.
     If it exists then use it , otherwise write it then use it
     """
+
     current_directory = solver.writer.reader.util.get_current_directory()
     full_path = current_directory + "/Mod_Files/" + file_name
 
     if os.path.isfile(full_path) == True:
-        
+        return True
     else :
+        return False
 
+
+def check_solver(file_name):
+    """
+    This function checks whether there exists a file_name.txt or not
+    """
+
+    current_directory = solver.writer.reader.util.get_current_directory()
+    full_path = current_directory + "/Solutions/" + file_name
+
+    if os.path.isfile(full_path) == True:
+        return True
+    else :
+        return False
 
 class MainApplication:
     def __init__(self , master):
@@ -102,6 +117,8 @@ class MainApplication:
         self.runmap_button.place(x = 180 ,  y = 350)
         self.canvas.pack()
 
+        self.dat_file_name = ""
+
     def check_validity_threshold(self):
         """
         This function checks validity of the user's threshold
@@ -134,36 +151,42 @@ class MainApplication:
         print("We selected Base Model")
         print(self.radio_button_var.get())
         self.active_user_threshold_entry()
+        self.dat_file_name = "BaseModel_"
 
     def select_multi_coverage(self):
         """
         """
         print("We selected Multi Coverage")
         self.active_user_threshold_entry()
+        self.dat_file_name = "MultiCoverage_"
 
     def select_maximum_coverage(self):
         """
         """
         print("We selected Maximum Coverage")
         self.active_user_threshold_entry()
+        self.dat_file_name = "MaximumCoverage_"
 
     def select_base_model_diff_cost(self):
         """
         """
         print("We selected Base Model Diff Cost")
         self.active_user_threshold_entry()
+        self.dat_file_name = "BaseModel_Diff_Cost_"
 
     def select_stochastic_coverage(self):
         """
         """
         print("We selected Stochastic Coverage")
         self.deactive_user_threshold_entry()
+        self.dat_file_name = "Stochastic_Coverage_"
 
     def select_stochastic_maximum_coverage(self):
         """
         """
         print("We selected Stochastic Maximum Coverage")
         self.deactive_user_threshold_entry()
+        self.dat_file_name = "Stochastic_Maximum_Coverage_"
 
     def run_map(self):
         """
@@ -182,14 +205,29 @@ class MainApplication:
         print("Availability_Matrix is created")
         fixed_cost = solver.writer.reader.util.generate_fixed_cost_array()
         print("Fixed_cost is created")
-        solver.writer.write_dat(availability_matrix , fixed_cost , threshold)
-        print(".dat file is created")
-        file_name = solver.run(choice , threshold)
-        print("Solver solved and txt is created.")
+        if choice <= 5 :
+            if check_dat_file(self.dat_file_name + str(threshold) + ".dat") == False:
+                solver.writer.write_dat(availability_matrix , fixed_cost , threshold)
+                print(".dat file is created")
+            else:
+                print("We have already .dat file.")
+
+        if choice <= 5:
+            if check_solver(self.dat_file_name + "Sol" + str(threshold) + ".txt") == False:
+                file_name = solver.run(choice , threshold)
+                print("Solver solved and txt is created.")
+            else:
+                print("We have already a solution array.")
+        else:
+            if check_solver(self.dat_file_name + "Sol.txt" ) == False :
+                file_name = solver.run(choice , threshold)
+                print("Solver solved and txt is created.")
+            else:
+                print("We have already a solution array.")
         solution_array = solver.writer.reader.read_cloud_solution(file_name)
         print("Solution array is read")
         map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance)
-        """
+
 
         ## TODO: Input chech
         #map.run()
