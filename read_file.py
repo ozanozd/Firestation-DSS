@@ -63,6 +63,24 @@ def read_district_file():
 
     return names_of_district , x_coordinates , y_coordinates , from_district , to_district , distances
 
+def read_risk():
+    """
+    This function reads risks from "MahalleVerileri.xlsx" without spending any time.
+    It takes no argument.
+    It returns 1 variable:
+        i) risks : A list , which contains direct risks of districts
+    """
+    all_data = pd.ExcelFile("MahalleVerileri.xlsx")
+    worksheet_1 = all_data.parse('Mahalle Listesi')
+
+    columns_1 = worksheet_1.columns
+    columns_1 = list(columns_1)
+
+    names = worksheet_1['MAHALLE']
+    risks = worksheet_1['Risk Kodu']
+
+    return risks
+
 def read_appropriate_pairs(filename):
     """
     This function reads appropriate_pairs excel file and returns appropriate_pairs as a list of lists

@@ -138,6 +138,68 @@ def write_dat(availability_matrix , fixed_cost , threshold):
              file.write(",")
     file.write("];")
 
+def write_multi_dat(risk_availability_matrix , risk_indicator , risk_array ,  fixed_cost , threshold):
+    """
+    """
+    file = open("Mod_Files/MultiCoverage_" + str(threshold) + ".dat" , 'w')
+
+    #Write num districts
+    file.write("Num_Districts = 867;\n")
+
+    #Write risk availability matrix
+    file.write("a=[")
+    for k in range(len(risk_availability_matrix)):
+        file.write("[")
+        for i  in range(len(risk_availability_matrix[k])):
+            file.write("[")
+            for j in range(len(risk_availability_matrix[k][i])):
+                file.write(str(risk_availability_matrix[k][i][j]))
+                if j != len(risk_availability_matrix[k][i]) - 1 :
+                    file.write(",")
+                else:
+                    file.write("]")
+            if i != len(risk_availability_matrix[k]) - 1 :
+                file.write(",")
+            else:
+                file.write("]\n")
+        if k != len(risk_availability_matrix) - 1:
+            file.write(",")
+        else:
+            file.write("];\n")
+
+    #Write risk indicator
+    file.write("r=[")
+    for i in range(len(risk_indicator)):
+        file.write("[")
+        for k in range(len(risk_indicator[i])):
+            file.write(str(risk_indicator[i][k]))
+            if k != len(risk_indicator[i]) - 1:
+                file.write(",")
+            else:
+                file.write("]")
+        if i != len(risk_indicator) - 1:
+            file.write(",")
+        else:
+            file.write("];\n")
+
+    #Write f_cost
+    file.write("f_cost=[")
+    for i in range(len(fixed_cost)):
+        file.write(str(fixed_cost[i]))
+        if i != len(fixed_cost) - 1:
+             file.write(",")
+    file.write("];\n")
+
+    #Write risk_array
+    file.write("n=[")
+    for i in range(len(risk_array)):
+        file.write(str(risk_array[i]))
+        if i != len(risk_array) - 1 :
+            file.write(",")
+        else:
+            file.write("];")
+
+
 def write_new_data(filename , from_districts , to_districts , new_values) :
     """
     This function writes new queries.
@@ -235,9 +297,18 @@ def run():
     """
     Look at the name of the function and guess its purpose..
     """
-    name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance = reader.read_district_file()
-    availability_matrix = reader.util.generate_availability_matrix(from_district , to_district , distance , 7000)
+    name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = reader.read_district_file()
+    print("Read district file")
+    risks = reader.read_risk()
+    print("Read risks")
+    risk_availability_matrix = reader.util.generate_risk_availability_matrix(from_districts , to_districts , distances , risks , 7000)
+    print("Risk availability matrix generated")
+    risk_indicator = reader.util.generate_risk_indicator(risks)
+    print("risk indicator done")
     fixed_cost = reader.util.generate_fixed_cost_array()
-    write_dat(availability_matrix , fixed_cost)
+    print("fixed cost is done")
+    risk_array = reader.util.generate_risk_array()
+    print("risk array is da")
+    write_multi_dat(risk_availability_matrix , risk_indicator , risk_array ,  fixed_cost , 7000)
     print("Sey oldu bisiy oldu baska bisiy oldu")
 #run()

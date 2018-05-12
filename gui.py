@@ -32,11 +32,14 @@ def check_availability_matrix(from_district , to_district , distance , threshold
     if os.path.isfile(full_path) == True:
         print(file_name , "is already exists.")
         availability_matrix = solver.writer.reader.read_availability_matrix(file_name)
+        print(file_name , "is read.")
         return availability_matrix
     else:
         print(file_name , "does not exist.")
         availability_matrix = solver.writer.reader.util.generate_availability_matrix(from_district , to_district , distance , threshold)
+        print("Availability_Matrix is created")
         solver.writer.write_availability_matrix_excel(availability_matrix , threshold)
+        print("Availability_Matrix is written")
         return availability_matrix
 
 
@@ -197,36 +200,50 @@ class MainApplication:
         threshold = int(self.user_threshold_entry.get())
         choice = self.radio_button_var.get()
 
-        #Run solver accordingly
-
-        name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance = solver.writer.reader.read_district_file()
+        #Prepare needed variables
+        name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
+        risks = solver.writer.reader.read_risk()
         print("District file is read")
-        availability_matrix = check_availability_matrix(from_district , to_district , distance , threshold)
-        print("Availability_Matrix is created")
+
+        #If the choice is not multicoverage use availability_matrix
+        if choice != 2:
+            availability_matrix = check_availability_matrix(from_districts , to_districts , distances , threshold)
+        else :
+            risk_availability_matrix = solver.writer.reader.util.generate_risk_availability_matrix(from_districts , to_districts , distances , risks , threshold)
+            risk_indicator = solver.writer.reader.util.generate_risk_indicator(risks)
+            risk_array = solver.writer.reader.util.generate_risk_array()
+
+        #Create fixed_cost
         fixed_cost = solver.writer.reader.util.generate_fixed_cost_array()
         print("Fixed_cost is created")
-        if choice <= 5 :
-            if check_dat_file(self.dat_file_name + str(threshold) + ".dat") == False:
+
+        #Create or use dat file
+        if check_dat_file(self.dat_file_name + str(threshold) + ".dat") == False:
+            if choice == 1:
                 solver.writer.write_dat(availability_matrix , fixed_cost , threshold)
                 print(".dat file is created")
-            else:
-                print("We have already .dat file.")
+            elif choice == 2:
+                solver.writer.write_multi_dat(risk_availability_matrix , risk_indicator , risk_array ,  fixed_cost , threshold)
+            elif choice == 3:
+                solver.writer.write_max_coverage_dat()
+            elif choice == 4:
+                solver.writer.write_base_mod_diff_cost_dat()
+            elif choice == 5:
+                solver.writer.write_stochastic_coverage_dat()
+            elif choice == 6:
+                solver.writer.write_stochastic_max_covarage_dat()
 
-        if choice <= 5:
-            if check_solver(self.dat_file_name + "Sol" + str(threshold) + ".txt") == False:
-                file_name = solver.run(choice , threshold)
-                print("Solver solved and txt is created.")
-            else:
-                print("We have already a solution array.")
         else:
-            if check_solver(self.dat_file_name + "Sol.txt" ) == False :
-                file_name = solver.run(choice , threshold)
-                print("Solver solved and txt is created.")
-            else:
-                print("We have already a solution array.")
+            print("We have already .dat file.")
+
+        if check_solver(self.dat_file_name + "Sol" + str(threshold) + ".txt") == False:
+            file_name = solver.run(choice , threshold)
+            print("Solver solved and txt is created.")
+        else:
+            print("We have already a solution array.")
         solution_array = solver.writer.reader.read_cloud_solution(file_name)
         print("Solution array is read")
-        map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance)
+        map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances)
 
 
         ## TODO: Input chech
@@ -243,8 +260,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
 def load_file(user_entry_box):
     """

@@ -26,10 +26,6 @@ def get_current_directory():
         print("current directory is : " + dirpath)
     return dirpath
 
-    """
-    foldername = os.path.basename(dirpath)
-    print("Directory name is : " + foldername)
-    """
 
 def get_appropriate_pairs(from_district , to_district , distance , threshold):
     """
@@ -80,8 +76,6 @@ def get_appropriate_pairs_da(from_district , to_district , distance , threshold)
             pair_array.append([district_1 , district_2])
 
     return pair_array
-
-
 
 def clean_query(duration):
     """
@@ -154,6 +148,63 @@ def generate_availability_matrix(from_district , to_district , distance , thresh
         availability_matrix[element[0] - 1][element[1] - 1] = 1
 
     return availability_matrix
+
+def generate_risk_availability_matrix(from_districts , to_districts , distances , risks , threshold):
+    """
+    This function generates availability_matrix with respect to risks.
+    This function takes 5 arguments:
+        i)   from_districts : A  list     , which consists of ids of from_districts
+        ii)  to_districts   : A  list     , which consists of ids of to_districts
+        iii) distances      : A  list     , which consists of distances between from_districts and to_districts
+        iv)  risks          : A  list     , which consists of fire risks of districts
+        v ) threshold       : An integer  , which is the number that represents whethet two districts are appropriate or not.
+
+    It return 1 variable:
+        i) availability_matrix_risk : A list of list of list : A list , which contains direct values
+    """
+    risk_dict = { 'A' : 0 , 'B' : 1 ,  'C' : 2 , 'D' : 3}
+
+
+    risk_availability_matrix = []
+    temp_array = []
+    for i in range(NUMBER_OF_DISTRICT) :
+        temp_array.append([0,0,0,0])
+
+    for i in range(NUMBER_OF_DISTRICT):
+        risk_availability_matrix.append(temp_array)
+
+    pair_array = get_appropriate_pairs_da(from_districts , to_districts , distances , threshold)
+    for element in pair_array :
+        from_district = element[0] - 1
+        to_district = element[1] - 1
+        risk = risks[to_district]
+        risk_number = risk_dict[risk]
+        risk_availability_matrix[from_district][to_district][risk_number] = 1
+
+    return risk_availability_matrix
+
+def generate_risk_indicator(risks):
+    """
+    This function is a function
+    """
+    risk_dict = { 'A' : 0 , 'B' : 1 ,  'C' : 2 , 'D' : 3}
+
+    risk_indicator = []
+    for i in range(NUMBER_OF_DISTRICT):
+        risk_indicator.append([0,0,0,0])
+
+    for i in range(NUMBER_OF_DISTRICT):
+        risk = risks[i]
+        risk_index = risk_dict[risk]
+        risk_indicator[i][risk_index] = 1
+
+    return risk_indicator
+
+def generate_risk_array():
+    """
+    This function is a function
+    """
+    return [2,2,1,1]
 
 def generate_fixed_cost_array():
     """
