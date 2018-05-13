@@ -358,6 +358,39 @@ def read_cloud_solution(filename):
             is_solution_end = True
 
     return solution_array
+
+def read_generated_numbers():
+    """
+    This function reads generated_numbers and returns them as a 33000 * 100 matrix directly
+    It takes no argument.
+    """
+    file = open("generated_random_numbers.txt" , 'r')
+    content = file.read()
+
+    names_of_district , x_coordinates , y_coordinates , from_districts , to_districts , distances = read_district_file()
+    appropriate_pairs = util.generate_appropriate_pairs(from_districts , to_districts , distances , 7000)
+
+    scenarios = []
+    for i in range(len(appropriate_pairs)):
+        scenarios.append([])
+
+    in_index = 0
+    out_index = 0
+    temp = ""
+    for char in content :
+        if 48 <= ord(char) <= 57:
+            temp += char
+        elif temp != "":
+            temp = int(temp)
+            scenarios[out_index].append(temp)
+            in_index += 1
+            if in_index == 100:
+                out_index += 1
+                in_index = 0
+            temp = ""
+
+    return scenarios
+
 def test():
     """
     Tests the above function
@@ -377,3 +410,12 @@ def run():
     for i in range(5):
         print(name_of_distribution[i] , parameters_of_distribution[i])
 #run()
+#read_generated_numbers()
+"""
+names_of_district , x_coordinates , y_coordinates , from_districts , to_districts , distances = read_district_file()
+random_numbers = read_generated_numbers()
+stochastic_availability_matrix = util.generate_stochastic_availability_matrix(from_districts , to_districts , random_numbers , 15 , distances , 90)
+print(len(stochastic_availability_matrix))
+print(len(stochastic_availability_matrix[0]))
+print(stochastic_availability_matrix)
+"""

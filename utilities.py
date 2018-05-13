@@ -27,7 +27,7 @@ def get_current_directory():
     return dirpath
 
 
-def get_appropriate_pairs(from_district , to_district , distance , threshold):
+def generate_appropriate_pairs(from_district , to_district , distance , threshold):
     """
     This function returns the pair of districts such that the distance between them is less than threshold returns it.
     If dist(district_a , district_b ) < threshold and district_a < district_b the list only contains (district_a , district_b).
@@ -182,6 +182,47 @@ def generate_risk_availability_matrix(from_districts , to_districts , distances 
         risk_availability_matrix[from_district][to_district][risk_number] = 1
 
     return risk_availability_matrix
+
+def generate_stochastic_availability_matrix(from_districts , to_districts , random_numbers , threshold , distances , confidence_interval):
+    """
+    This function creates stochastic availability_matrix.
+    """
+
+    #Initialize stochastic_availability_matrix
+    stochastic_availability_matrix = []
+    temp_array = []
+    for i in range(NUMBER_OF_DISTRICT) :
+        temp_array.append(0)
+
+    for i in range(NUMBER_OF_DISTRICT):
+        stochastic_availability_matrix.append(list(temp_array))
+
+
+    #Prepare available_array
+    available_array = []
+    for i in range(len(random_numbers)):
+        score = 0
+        for element in random_numbers[i]:
+            if element <= threshold :
+                score += 1
+        if score >= confidence_interval :
+            available_array.append(1)
+        else :
+            available_array.append(0)
+
+    appropriate_pairs = generate_appropriate_pairs(from_districts , to_districts , distances , 7000)
+    #Make changes in the stochastic_availability_matrix
+    for i in range(len(appropriate_pairs)):
+        index1 = appropriate_pairs[i][0] - 1
+        index2 = appropriate_pairs[i][1] - 1
+        if available_array[i] == 1:
+            stochastic_availability_matrix[index1][index2] = 1
+            stochastic_availability_matrix[index2][index1] = 1
+
+    for i in range(NUMBER_OF_DISTRICT):
+        stochastic_availability_matrix[i][i] = 1
+
+    return stochastic_availability_matrix
 
 def generate_risk_indicator(risks):
     """

@@ -1,6 +1,6 @@
 //set
 int Num_Districts=...;
-float C=...;//confidence level
+float c=...;//confidence level
 
 //ranges
 range from_range=1..Num_Districts;
@@ -23,9 +23,9 @@ minimize sum (i in from_range)f_cost[i]*y[i];
 
 subject to {
 
-forall (j in to_range,k in scenario) sum(i in from_range) a[i][j][k]*y[i] >= s[j][k]; 
+forall (j in to_range,k in scenario) sum(i in from_range) a[i][j][k]*y[i] >= s[j][k];
 
-forall (j in to_range) sum(k in scenario) s[j][k] >= C;
+forall (j in to_range) sum(k in scenario) s[j][k] >= c;
 
 //forall[i in from_range, j in to_range, k in scenario) t[i][j][k]*a[i][j][k]<=d[k];
 }

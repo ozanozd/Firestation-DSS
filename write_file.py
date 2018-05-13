@@ -110,7 +110,7 @@ def write_availability_matrix_excel(availability_matrix , threshold):
         for k in range(reader.util.NUMBER_OF_DISTRICT) :
             worksheet.write(row + i , col + k  , availability_matrix[i][k])
 
-def write_dat(availability_matrix , fixed_cost , threshold):
+def write_dat(availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval):
     """
     This function creates .dat file for cplex_cloud.
     This function takes 2 arguments:
@@ -119,8 +119,17 @@ def write_dat(availability_matrix , fixed_cost , threshold):
     This function returns nothing.
     """
 
-    file = open("Mod_Files/BaseModel_" + str(threshold) + ".dat" , 'w')
+    if facility_number == 0 and is_stochastis == False :
+        file = open("Mod_Files/BaseModel_" + str(threshold) + ".dat" , 'w')
+    elif facility_number > 0 and is_stochastis == False :
+        file = open("Mod_Files/MaxCoverage_" + str(threshold) + "_" + str(facility_number) +  ".dat" , 'w')
+    elif facility_number == 0 and is_stochastis == True :
+        file = open("Mod_Files/Stochastic_Coverage_" + str(threshold) + "_" + str(confidence_interval) +  ".dat" , 'w')
+    elif facility_number > 0 and is_stochastis == True :
+        file = open("Mod_Files/Stochastic_MaxCoverage_" + str(threshold) +  "_" + str(facility_number) + "_" + str(confidence_interval) +  ".dat" , 'w')
     file.write("Num_Districts = 867;\n")
+    if facility_number > 0:
+        file.write("facility_number= " + str(facility_number) + ";\n")
     file.write("a=[")
     for k in range(len(availability_matrix)) :
         file.write("[")
@@ -131,14 +140,15 @@ def write_dat(availability_matrix , fixed_cost , threshold):
             file.write("];\n")
         else :
             file.write(",\n")
-    file.write("f_cost=[")
-    for i in range(len(fixed_cost)):
-        file.write(str(fixed_cost[i]))
-        if i != len(fixed_cost) - 1:
-             file.write(",")
-    file.write("];")
+    if facility_number == 0:
+        file.write("f_cost=[")
+        for i in range(len(fixed_cost)):
+            file.write(str(fixed_cost[i]))
+            if i != len(fixed_cost) - 1:
+                file.write(",")
+        file.write("];")
 
-def write_multi_dat(risk_availability_matrix , risk_indicator , risk_array ,  fixed_cost , threshold):
+def write_multi_dat(availability_matrix , risk_indicator , risk_array ,  fixed_cost , threshold):
     """
     """
     file = open("Mod_Files/MultiCoverage_" + str(threshold) + ".dat" , 'w')
@@ -146,26 +156,17 @@ def write_multi_dat(risk_availability_matrix , risk_indicator , risk_array ,  fi
     #Write num districts
     file.write("Num_Districts = 867;\n")
 
-    #Write risk availability matrix
+    #Write availability matrix
     file.write("a=[")
-    for k in range(len(risk_availability_matrix)):
+    for k in range(len(availability_matrix)) :
         file.write("[")
-        for i  in range(len(risk_availability_matrix[k])):
-            file.write("[")
-            for j in range(len(risk_availability_matrix[k][i])):
-                file.write(str(risk_availability_matrix[k][i][j]))
-                if j != len(risk_availability_matrix[k][i]) - 1 :
-                    file.write(",")
-                else:
-                    file.write("]")
-            if i != len(risk_availability_matrix[k]) - 1 :
-                file.write(",")
-            else:
-                file.write("]\n")
-        if k != len(risk_availability_matrix) - 1:
-            file.write(",")
-        else:
+        for i in range(len(availability_matrix[k]) - 1):
+            file.write(str(availability_matrix[k][i]) + ",")
+        file.write(str(availability_matrix[k][len(availability_matrix[k]) - 1]) + "]")
+        if k == len(availability_matrix) - 1 :
             file.write("];\n")
+        else :
+            file.write(",\n")
 
     #Write risk indicator
     file.write("r=[")
@@ -198,7 +199,6 @@ def write_multi_dat(risk_availability_matrix , risk_indicator , risk_array ,  fi
             file.write(",")
         else:
             file.write("];")
-
 
 def write_new_data(filename , from_districts , to_districts , new_values) :
     """
