@@ -53,8 +53,8 @@ class MainApplication:
         self.user_confidence_entry = tk.Entry(self.canvas , text = "Confidence" ,  font = ("Calibri" , 12) , state = tk.DISABLED)
 
         # Define buttons
-        self.load_button = tk.Button(self.canvas , text = "Load"  , command = lambda: load_file(user_entry_box))
-        self.select_button = tk.Button(self.canvas , text = "Select")
+        self.load_button = tk.Button(self.canvas , text = "Load"  , command = self.load_file)
+        self.select_button = tk.Button(self.canvas , text = "Select" , command = self.run_selected_solution)
         self.runmap_button = tk.Button(self.canvas , text = "Run Map" , command =  self.run_map)
 
         # Initialize radiobuttons as all of them are unselected
@@ -213,6 +213,25 @@ class MainApplication:
         self.active_user_confidence_entry()
         self.dat_file_name = "Stochastic_Maximum_Coverage_"
 
+    def load_file(self):
+        """
+        When the load button is pressed this function is invoked.It is responsible of two things:
+            i)  Call the file chooser function
+            ii) Load the excel file
+        """
+        filename = askopenfilename()
+        self.user_entry_box.insert(0 , filename)
+
+
+    def run_selected_solution(self):
+        """
+        """
+        file_name = self.user_entry_box.get()
+        solution_array = solver.writer.reader.read_selected_solution(file_name)
+        print("Solution array is read")
+        name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
+        map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances)
+
     def run_map(self):
         """
         Run the map with given user choices
@@ -322,14 +341,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-def load_file(user_entry_box):
-    """
-    When the load button is pressed this function is invoked.It is responsible of two things:
-        i)  Call the file chooser function
-        ii) Load the excel file
-    """
-    filename = askopenfilename()
-    user_entry_box.insert(0 , filename)
 
 def check_validity_threshold(user_threshold_entry):
     """

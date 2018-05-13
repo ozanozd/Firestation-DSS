@@ -359,6 +359,30 @@ def read_cloud_solution(filename):
 
     return solution_array
 
+def read_selected_solution(filename):
+    """
+    This function reads solution of the optimization problem which is solved by cplex_cloud
+    """
+
+    solution_file = open(filename , 'r')
+    content = solution_file.read()
+
+    is_solution_start = False
+    is_solution_end = False
+    solution_array = []
+
+    for i in range(len(content)) :
+        if content[i : i + 5] == "y = [" :
+            is_solution_start = True
+        if is_solution_start == True and is_solution_end == False :
+            if 48 <= ord(content[i]) <= 49 :
+                solution_array.append(int(content[i]))
+
+        if is_solution_start == True and content[i] == "]" :
+            is_solution_end = True
+
+    return solution_array
+
 def read_generated_numbers():
     """
     This function reads generated_numbers and returns them as a 33000 * 100 matrix directly
@@ -411,11 +435,3 @@ def run():
         print(name_of_distribution[i] , parameters_of_distribution[i])
 #run()
 #read_generated_numbers()
-"""
-names_of_district , x_coordinates , y_coordinates , from_districts , to_districts , distances = read_district_file()
-random_numbers = read_generated_numbers()
-stochastic_availability_matrix = util.generate_stochastic_availability_matrix(from_districts , to_districts , random_numbers , 15 , distances , 90)
-print(len(stochastic_availability_matrix))
-print(len(stochastic_availability_matrix[0]))
-print(stochastic_availability_matrix)
-"""
