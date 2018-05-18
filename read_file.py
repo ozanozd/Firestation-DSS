@@ -271,8 +271,8 @@ def polygon_coords(filename):
             while y_district[i] > 100 :
                 y_district[i] /= 10
 
-            lat[int(id_district[i]/10)].append(x_district[i])
-            longs[int(id_district[i]/10)].append(y_district[i])
+            lat[int(id_district[i]/10)].append(y_district[i])
+            longs[int(id_district[i]/10)].append(x_district[i])
 
     return lat,longs
 

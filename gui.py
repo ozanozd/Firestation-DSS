@@ -39,7 +39,7 @@ class MainApplication:
         # Define buttons
         self.load_button = tk.Button(self.canvas , text = "Load"  , command = self.load_file)
         self.select_button = tk.Button(self.canvas , text = "Select" , command = self.run_selected_solution)
-        self.runmap_button = tk.Button(self.canvas , text = "Run Map" , command =  self.run_map)
+        self.runmap_button = tk.Button(self.canvas , text = "Run Map" , command =  self.run_map , state= tk.DISABLED)
 
         # Initialize radiobuttons as all of them are unselected
         self.radio_button_var = tk.IntVar()
@@ -77,6 +77,24 @@ class MainApplication:
         self.canvas.pack()
 
         self.dat_file_name = ""
+
+
+    def clear_all_inputs(self):
+        """
+        This function clears all input fields
+        It takes no arguments.
+        It returns nothing.
+        """
+        self.user_threshold_entry.delete(0, 'end')
+        self.user_min_threshold_entry.delete(0, 'end')
+        self.user_facility_entry.delete(0, 'end')
+        self.user_confidence_entry.delete(0, 'end')
+
+    def activate_run_map(self):
+        """
+        This function activates run_map button
+        """
+        self.runmap_button.configure(state = tk.NORMAL)
 
     def check_validity_threshold(self):
         """
@@ -149,6 +167,7 @@ class MainApplication:
     def select_base_model(self):
         """
         """
+        self.clear_all_inputs()
         print("We selected Base Model")
         print(self.radio_button_var.get())
         self.active_user_threshold_entry()
@@ -156,47 +175,55 @@ class MainApplication:
         self.deactive_user_confidence_entry()
         self.deactive_user_facility_entry()
         self.dat_file_name = "BaseModel_"
+        self.activate_run_map()
 
     def select_multi_coverage(self):
         """
         """
+        self.clear_all_inputs()
         print("We selected Multi Coverage")
         self.active_user_threshold_entry()
         self.deactive_user_min_threshold_entry()
         self.deactive_user_confidence_entry()
         self.deactive_user_facility_entry()
         self.dat_file_name = "MultiCoverage_"
+        self.activate_run_map()
 
     def select_maximum_coverage(self):
         """
         """
+        self.clear_all_inputs()
         print("We selected Maximum Coverage")
         self.active_user_threshold_entry()
         self.deactive_user_min_threshold_entry()
         self.deactive_user_confidence_entry()
         self.active_user_facility_entry()
         self.dat_file_name = "MaximumCoverage_"
+        self.activate_run_map()
 
     def select_stochastic_coverage(self):
         """
         """
+        self.clear_all_inputs()
         print("We selected Stochastic Coverage")
         self.deactive_user_threshold_entry()
         self.active_user_min_threshold_entry()
         self.deactive_user_facility_entry()
         self.active_user_confidence_entry()
         self.dat_file_name = "Stochastic_Coverage_"
+        self.activate_run_map()
 
     def select_stochastic_maximum_coverage(self):
         """
         """
+        self.clear_all_inputs()
         print("We selected Stochastic Maximum Coverage")
         self.deactive_user_threshold_entry()
         self.active_user_min_threshold_entry()
         self.active_user_facility_entry()
         self.active_user_confidence_entry()
         self.dat_file_name = "Stochastic_Maximum_Coverage_"
-
+        self.activate_run_map()
     def load_file(self):
         """
         When the load button is pressed this function is invoked.It is responsible of two things:
@@ -328,7 +355,7 @@ class MainApplication:
         This function checks whether there exists a file_name.txt or not
         It takes 6 arguments:
             i) file_name : A string , which represents the name of the file that contains solutions according to user's choice.
-        It returns a boolean which is represents whether there file_name.txt exists or not
+        It returns a boolean which represents whether there file_name.txt exists or not
         """
         current_directory = solver.writer.reader.util.get_current_directory()
         full_path = current_directory + "/Solutions/" + file_name
@@ -338,19 +365,113 @@ class MainApplication:
         else :
             return False
 
+    def threshold_check(self):
+        """
+        This function checks whether threshold is valid or not.
+        It takes no arguments.
+        It returns True if threshold is valid , otherwise it returns False.
+        """
+        threshold = self.user_threshold_entry.get()
+        try :
+            threshold = int(threshold)
+            if threshold < 0 :
+                messagebox.showerror("Error", "Please enter a nonnegative value for threshold")
+                return False
+            return True
+        except:
+            messagebox.showerror("Error", "Please enter an integer for threshold")
+            return False
+
+    def facility_number_check(self):
+        """
+        This function checks whether facility_number is valid or not.
+        It takes no arguments.
+        It returns True if facility_number is valid , otherwise it returns False.
+        """
+        facility_number = self.user_facility_entry.get()
+        try :
+            facility_number = int(facility_number)
+            if facility_number < 0 or facility_number > 867 :
+                messagebox.showerror("Error", "Please enter a value in [0,867] for facility_number")
+                return False
+            return True
+        except:
+            messagebox.showerror("Error", "Please enter an integer for facility_number")
+            return False
+
+    def threshold_min_check(self):
+        """
+        This function checks whether min_threshold is valid or not.
+        It takes no arguments.
+        It returns True if min_threshold is valid , otherwise it returns False.
+        """
+        min_threshold = self.user_min_threshold_entry.get()
+        try :
+            min_threshold = int(min_threshold)
+            if min_threshold < 0 :
+                messagebox.showerror("Error", "Please enter a nonnegative value for min_threshold")
+                return False
+            return True
+        except:
+            messagebox.showerror("Error", "Please enter an integer for min_threshold")
+            return False
+
+    def confidence_interval_check(self):
+        """
+        This function checks whether confidence_interval is valid or not.
+        It takes no arguments.
+        It returns True if confidence_interval is valid , otherwise it returns False.
+        """
+        confidence_interval = self.user_confidence_entry.get()
+        try :
+            confidence_interval = int(confidence_interval)
+            if confidence_interval < 0 or confidence_interval > 100 :
+                messagebox.showerror("Error", "Please enter a value in [0,100] interval for confidence_interval")
+                return False
+            return True
+        except:
+            messagebox.showerror("Error", "Please enter an integer for confidence_interval")
+            return False
+
+
+    def input_check(self , choice):
+        """
+        This function makes an input check according to user's choice
+        It takes 1 arguments:
+            i)  choice : An integer , which represents user's model choice
+        It returns a boolean which represents whether inputs are valid or not
+        """
+        if choice == 1 or choice == 2:
+            return self.threshold_check()
+        elif choice == 3:
+            if self.threshold_check() == True:
+                return self.facility_number_check()
+            else:
+                return False
+        elif choice == 4:
+            if self.threshold_min_check() == True:
+                return self.confidence_interval_check()
+            else:
+                return False
+        elif choice == 5:
+            if self.threshold_min_check() == True:
+                if self.confidence_interval_check() == True:
+                    return self.facility_number_check()
+                else:
+                    return False
+            else:
+                return False
+
     def run_map(self):
         """
         Run the map with given user choices.
         It takes no arguments.
         It returns nothing.
         """
-
+        choice = self.radio_button_var.get()
         #Make an input check before running map
-        if self.input_check() == False:
-
-        else:
-            #Prepare thresholds , facility_numer , confidence_interval etc.
-            choice = self.radio_button_var.get()
+        if self.input_check(choice) == True:
+            #Prepare thresholds , facility_number , confidence_interval etc.
             threshold , is_stochastis , min_threshold , facility_number , confidence_interval = self.get_user_entries(choice)
 
             #Generate file name of the solution file

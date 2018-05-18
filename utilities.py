@@ -307,3 +307,27 @@ def get_new_ids(old_district_names , new_district_names):
         else:
             print(old_district_names[i] , i)
     return new_ids
+
+def calculate_centers_new_districts(lats , longs):
+    """
+    This function calculates centers of new districts using polygon coordinates
+    It takes 2 arguments:
+        i) lats  : A list of list , which has 975 element and each element consists of lats of polygon coordinates of a particular district
+        i) longs : A list of list , which has 975 element and each element consists of longs of polygon coordinates of a particular district
+    """
+    x_coordinates = []
+    y_coordinates = []
+    for i in range(len(lats)):
+        temp_x = 0
+        temp_y = 0
+        for k in range(len(lats[i])):
+            temp_x += longs[i][k]
+            temp_y += lats[i][k]
+
+        center_x = temp_x / len(lats[i])
+        center_y = temp_y / len(longs[i])
+
+        x_coordinates.append(center_x)
+        y_coordinates.append(center_y)
+
+    return x_coordinates , y_coordinates

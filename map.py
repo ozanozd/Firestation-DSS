@@ -79,7 +79,7 @@ def run(solution_array , name_of_districts , x_coordinates , y_coordinates , fro
     gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
     lats , longs = reader.polygon_coords("temp-nodes.xlsx")
     for i in range(975):
-        gmap.polygon(longs[i] , lats[i] , color = 'green' , c = 'red')
+        gmap.polygon(lats[i] , longs[i] , color = 'green' , c = 'red')
     gmap.draw("last_map.html")
     path = os.path.abspath("last_map.html")
     url = "file://" + path

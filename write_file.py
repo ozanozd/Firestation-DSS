@@ -288,6 +288,20 @@ def write_generated_numbers(random_numbers , fixed_cost):
     file.write("];")
     file.close()
 
+def write_new_district_data(new_district_names , new_district_x_centers , new_district_y_centers):
+    """
+    This function writes new district data.
+    It takes 3 arguments:
+        i)   new_district_names     : A list , which consists of names of new districts
+        ii)  new_district_x_centers : A list , which consists of x_centers of new districts
+        iii) new_district_x_centers : A list , which consists of y_centers of new districts
+    """
+    #Prepare data to write in excel; directly, with zero time waste.
+    df = pd.DataFrame({'MAHALLE': new_district_names , 'X': new_district_x_centers , 'Y': new_district_y_centers})
+
+    #Write the data into excel
+    df.to_excel( "Yeni_MahalleVerileri.xlsx" , sheet_name = 'Sheet1' , index=False)
+
 def write_new_ids(new_id):
     """
     This function writes new_ids of district to txt file.
@@ -297,18 +311,8 @@ def run():
     """
     Look at the name of the function and guess its purpose..
     """
-    name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = reader.read_district_file()
-    print("Read district file")
-    risks = reader.read_risk()
-    print("Read risks")
-    risk_availability_matrix = reader.util.generate_risk_availability_matrix(from_districts , to_districts , distances , risks , 7000)
-    print("Risk availability matrix generated")
-    risk_indicator = reader.util.generate_risk_indicator(risks)
-    print("risk indicator done")
-    fixed_cost = reader.util.generate_fixed_cost_array()
-    print("fixed cost is done")
-    risk_array = reader.util.generate_risk_array()
-    print("risk array is da")
-    write_multi_dat(risk_availability_matrix , risk_indicator , risk_array ,  fixed_cost , 7000)
-    print("Sey oldu bisiy oldu baska bisiy oldu")
-#run()
+    lats , longs = reader.polygon_coords("temp-nodes.xlsx")
+    new_district_x_centers , new_district_y_centers = reader.util.calculate_centers_new_districts(lats , longs)
+    new_district_names = reader.read_new_district_names("temp-attributes.xlsx")
+    write_new_district_data(new_district_names , new_district_x_centers , new_district_y_centers)
+run()
