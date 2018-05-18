@@ -2,7 +2,6 @@
 """
 This program open a map using foluim library
 """
-
 #General library imports
 import webbrowser
 import os
@@ -28,10 +27,9 @@ COLOR_ARRAY = [ "aliceblue" , "antiquewhite" , "aqua" , "aquamarine" , "azure" ,
                 "mediumseagreen" , "mediumslateblue" , "mediumspringgreen" , "mediumturquoise" , "mediumvioletred" , "midnightblue" , "mintcream"         ,
                 "mistyrose" , "moccasin" , "navajowhite" , "navy" , "oldlace" , "olive" , "olivedrab" , "orange" , "orangered" , "orchid"                 ,
                 "palegoldenrod" , "palegreen" , "paleturquoise" , "palevioletred" , "papayawhip" , "peachpuff" , "peru" , "pink" , "plum" , "powderblue"  ,
-                "purple" , "red" , "rosybrown" , "royalblue" , "saddlebrown" , "salmon" , "sandybrown" , "seagreen" , "seashell" , "sienna" , "silver"    ,
+                "purple" , "rosybrown" , "royalblue" , "saddlebrown" , "salmon" , "sandybrown" , "seagreen" , "seashell" , "sienna" , "silver"            ,
                 "skyblue" , "slateblue" , "slategray" , "snow" , "springgreen" , "steelblue" , "tan" , "teal" , "thistle" , "tomato" , "turquoise"        ,
                 "violet" , "wheat" , "white" , "whitesmoke" , "yellow" , "yellowgreen"]
-
 
 def add_marker(x_coordinates , y_coordinates , name_of_districts , solution_array):
     """
@@ -43,6 +41,7 @@ def add_marker(x_coordinates , y_coordinates , name_of_districts , solution_arra
     iv)  solution_array    : A list , whose length is NUMBER_OF_DISTRICT it contains binary values if ith element of it is 1 then we will open a fire station at ith district
     It returns nothing
     """
+    color_array = []
     color_index = 0
     for i in range(reader.util.NUMBER_OF_DISTRICT):
         #If the ith distict has a fire station add marker to it
@@ -51,35 +50,59 @@ def add_marker(x_coordinates , y_coordinates , name_of_districts , solution_arra
             color_index += 1
             if color_index == len(COLOR_ARRAY) :
                 color_index = color_index % len(COLOR_ARRAY)
+            color_array.append(COLOR_ARRAY[color_index])
+        else:
+            color_array.append("NONE")
 
-def add_polygon(lats , longs , availability_matrix ,  solution_array):
+    return color_array
+
+def add_polygon(lats , longs , solution_array , x_coordinates , y_coordinates , new_x_coordinates , new_y_coordinates , threshold , old_colors):
     """
     This function draw polygons with the same color of markers of district which covered them
     It takes 3 arguments:
         i) lats                  : A list , which consists of polygon lattitues of districts
         ii) longs                : A list , which consists of polygon longtitues of districts
-        iii) availability_matrix : A list of list , which consist of appropriate_pairs
         iii) solution_array      : A list , which contains binary_values that represent whether we will open a fire station in ith district or not
+        iv) x_coordinates        : A list , which contains x_coordinates of old districts
+        iv) y_coordinates        : A list , which contains y_coordinates of old districts
+        iv) new_x_coordinates    : A list , which contains x_coordinates of new districts
+        iv) new_y_coordinates    : A list , which contains x_coordinates of new districts
     It return nothing
     """
-    pass
-    """
-    color_index = 0
-    for i in range(reader.util.NUMBER_OF_DISTRICT) :
+    new_colors = []
+    covered = []
+    for i in range(reader.util.VIS_NUMBER_OF_DISTRICT):
+        covered.append(False)
+        new_colors.append(" ")
+
+    for i in range(len(solution_array)):
         if solution_array[i] == 1 :
-            for j in range(reader.util.NUMBER_OF_DISTRICT):
-    """
+            old_x = x_coordinates[i]
+            old_y = y_coordinates[i]
+            for k in range(len(new_x_coordinates)):
+                new_x = new_x_coordinates[k]
+                new_y = new_y_coordinates[k]
+                dist = reader.util.calculate_distance_between_two_district(old_x , old_y , new_x , new_y)
+                if dist < threshold:
+                    covered[k] = True
+                    new_colors[k] = old_colors[i]
 
+    for i in range(len(covered)):
+        if covered[i] == False:
+            new_colors[i] = "red"
 
-def run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance):
+    for i in range(975):
+        gmap.polygon(lats[i] , longs[i] , color = new_colors[i])
+
+def run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance , threshold):
     """
     This function runs the map and show the correspding html
     """
-    add_marker(x_coordinates , y_coordinates , name_of_districts , solution_array)
+    old_color_array = add_marker(x_coordinates , y_coordinates , name_of_districts , solution_array)
+    new_x_coordinates , new_y_coordinates = reader.read_new_district_xy()
     gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
     lats , longs = reader.polygon_coords("temp-nodes.xlsx")
-    for i in range(975):
-        gmap.polygon(lats[i] , longs[i] , color = 'green' , c = 'red')
+    add_polygon(lats , longs , solution_array , x_coordinates , y_coordinates , new_x_coordinates , new_y_coordinates , threshold , old_color_array)
     gmap.draw("last_map.html")
     path = os.path.abspath("last_map.html")
     url = "file://" + path

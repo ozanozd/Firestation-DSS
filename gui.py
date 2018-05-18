@@ -2,7 +2,6 @@
 This program creates necessary gui for the decision support system.It based on the native library of python tkinter
 Gui is designed in object oriented style.
 """
-
 #General library imports
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
@@ -96,80 +95,58 @@ class MainApplication:
         """
         self.runmap_button.configure(state = tk.NORMAL)
 
-    def check_validity_threshold(self):
-        """
-        This function checks validity of the user's threshold
-        """
-        try :
-            int(self.user_threshold_entry.get())
-            return True
-        except ValueError :
-            return False
-
-        return True
-
     def active_user_threshold_entry(self):
         """
         This function activates user_threshold_entry
         """
-        print("User threshold entry activated.")
         self.user_threshold_entry.configure(state = tk.NORMAL)
 
     def deactive_user_threshold_entry(self):
         """
         This function deactivates user_threshold_entry
         """
-        print("User threshold entry deactivated.")
         self.user_threshold_entry.configure(state = tk.DISABLED)
 
     def active_user_min_threshold_entry(self):
         """
         This function activates user_min_threshold_entry
         """
-        print("User min_threshold entry activated.")
         self.user_min_threshold_entry.configure(state = tk.NORMAL)
 
     def deactive_user_min_threshold_entry(self):
         """
         This function deactivates user_min_threshold_entry
         """
-        print("User min_threshold entry deactivated.")
         self.user_min_threshold_entry.configure(state = tk.DISABLED)
 
     def active_user_facility_entry(self):
         """
         This function activates user_facility_entry
         """
-        print("User facility entry activated.")
         self.user_facility_entry.configure(state = tk.NORMAL)
 
     def deactive_user_facility_entry(self):
         """
         This function activates user_threshold_entry
         """
-        print("User facility entry deactivated.")
         self.user_facility_entry.configure(state = tk.DISABLED)
 
     def active_user_confidence_entry(self):
         """
         This function activates user_confidence_entry
         """
-        print("User onfidence entry activated.")
         self.user_confidence_entry.configure(state = tk.NORMAL)
 
     def deactive_user_confidence_entry(self):
         """
         This function deactivates user_confidence_entry
         """
-        print("User confidence entry deactivated.")
         self.user_confidence_entry.configure(state = tk.DISABLED)
 
     def select_base_model(self):
         """
         """
         self.clear_all_inputs()
-        print("We selected Base Model")
-        print(self.radio_button_var.get())
         self.active_user_threshold_entry()
         self.deactive_user_min_threshold_entry()
         self.deactive_user_confidence_entry()
@@ -181,7 +158,6 @@ class MainApplication:
         """
         """
         self.clear_all_inputs()
-        print("We selected Multi Coverage")
         self.active_user_threshold_entry()
         self.deactive_user_min_threshold_entry()
         self.deactive_user_confidence_entry()
@@ -193,7 +169,6 @@ class MainApplication:
         """
         """
         self.clear_all_inputs()
-        print("We selected Maximum Coverage")
         self.active_user_threshold_entry()
         self.deactive_user_min_threshold_entry()
         self.deactive_user_confidence_entry()
@@ -205,7 +180,6 @@ class MainApplication:
         """
         """
         self.clear_all_inputs()
-        print("We selected Stochastic Coverage")
         self.deactive_user_threshold_entry()
         self.active_user_min_threshold_entry()
         self.deactive_user_facility_entry()
@@ -217,7 +191,6 @@ class MainApplication:
         """
         """
         self.clear_all_inputs()
-        print("We selected Stochastic Maximum Coverage")
         self.deactive_user_threshold_entry()
         self.active_user_min_threshold_entry()
         self.active_user_facility_entry()
@@ -232,7 +205,6 @@ class MainApplication:
         """
         filename = askopenfilename()
         self.user_entry_box.insert(0 , filename)
-
 
     def run_selected_solution(self , file_name):
         """
@@ -273,7 +245,7 @@ class MainApplication:
         else:
             is_stochastis = True
             min_threshold = int(self.user_min_threshold_entry.get())
-            threshold = 0
+            threshold = 7000
             confidence_interval = int(self.user_confidence_entry.get())
             if choice == 4 :
                 facility_number = 0
@@ -282,7 +254,7 @@ class MainApplication:
 
         return threshold , is_stochastis , min_threshold , facility_number , confidence_interval
 
-    def get_appropriate_available_matrix(self,choice):
+    def get_appropriate_available_matrix(self,choice , from_districts , to_districts , distances , threshold , random_numbers , min_threshold , confidence_interval):
         """
         This function creates appropriate availability_matrix according to user's choice.
         It takes 1 argument :
@@ -338,15 +310,15 @@ class MainApplication:
             i) file_name            : A string   , which represents the name of the file that contains solutions according to user's choice.
         """
         if choice == 1:
-            file_name = self.dat_file_name + "Sol" + str(threshold) + ".txt"
+            file_name = self.dat_file_name + "Sol_" + str(threshold) + ".txt"
         elif choice == 2:
-            file_name = self.dat_file_name + "Sol" + str(threshold) + "_" + str(facility_number) + ".txt"
+            file_name = self.dat_file_name + "Sol_" + str(threshold) + "_" + str(facility_number) + ".txt"
         elif choice == 3:
-            file_name = self.dat_file_name + "Sol" + str(threshold) + ".txt"
+            file_name = self.dat_file_name + "Sol_" + str(threshold) + ".txt"
         elif choice == 4:
-            file_name = self.dat_file_name + "Sol" + str(min_threshold) + "_" + str(confidence_interval) +  ".txt"
+            file_name = self.dat_file_name + "Sol_" + str(min_threshold) + "_" + str(confidence_interval) +  ".txt"
         elif choice == 5:
-            file_name = self.dat_file_name + "Sol" + str(min_threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) +  ".txt"
+            file_name = self.dat_file_name + "Sol_" + str(min_threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) +  ".txt"
 
         return file_name
 
@@ -433,7 +405,6 @@ class MainApplication:
             messagebox.showerror("Error", "Please enter an integer for confidence_interval")
             return False
 
-
     def input_check(self , choice):
         """
         This function makes an input check according to user's choice
@@ -486,10 +457,11 @@ class MainApplication:
                 risks = solver.writer.reader.read_risk()
                 risk_indicator = solver.writer.reader.util.generate_risk_indicator(risks)
                 risk_array = solver.writer.reader.util.generate_risk_array()
+                random_numbers = solver.writer.reader.read_generated_numbers()
                 print("District file is read")
 
                 #Get availability_matrix , it can be stochastic as well
-                availability_matrix = self.get_appropriate_available_matrix(choice)
+                availability_matrix = self.get_appropriate_available_matrix(choice , from_districts , to_districts , distances , threshold , random_numbers , min_threshold , confidence_interval)
 
                 #Create fixed_cost
                 fixed_cost = solver.writer.reader.util.generate_fixed_cost_array()
@@ -500,7 +472,7 @@ class MainApplication:
                 solver.run(choice , threshold , confidence_interval , facility_number , min_threshold)
                 solution_array = solver.writer.reader.read_cloud_solution(file_name)
                 print("Solution array is read")
-                map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances)
+                map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances , threshold)
 
 def main():
     root = tk.Tk()

@@ -338,7 +338,7 @@ def read_cloud_solution(filename):
     This function reads solution of the optimization problem which is solved by cplex_cloud
     """
     current_directory = util.get_current_directory()
-    full_path = current_directory + "/" + filename
+    full_path = current_directory + "/Solutions/" + filename
 
     solution_file = open(full_path , 'r')
     content = solution_file.read()
@@ -414,6 +414,27 @@ def read_generated_numbers():
             temp = ""
 
     return scenarios
+
+def read_new_district_xy():
+    """
+    This function reads new x and y coordinates of centers of new districts
+    It takes no arguments.
+    It returns 2 variables:
+        i)  new_x_coordinates : A list , which contains x coordinates of centers of new districts
+        ii) new_y_coordinates : A list , which contains x coordinates of centers of new districts
+
+    """
+    all_data = pd.ExcelFile("Yeni_MahalleVerileri.xlsx")
+    worksheet = all_data.parse('Sheet1')
+
+    columns = worksheet.columns
+    columns = list(columns)
+
+    #Read all the x_coordinates and y_coordinates
+    new_x_coordinates = worksheet['X'].values
+    new_y_coordinates = worksheet['Y'].values
+
+    return  new_x_coordinates , new_y_coordinates
 
 def test():
     """

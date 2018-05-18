@@ -1,10 +1,6 @@
 """
 The program writes the appropriate pairs into an excel sheet
 """
-# Works to be done:
-# i) Redesign the function according to our new needs
-# ii) Combine write_availability_matrix_excel.py and write_excel.py
-
 #General library imports
 import pandas as pd
 import xlsxwriter
@@ -18,11 +14,6 @@ IS_DEBUG = False
 
 # Define a boolean flag, if the flag is set(it is equal to true) , then run the test.Otherwise do not run it.
 IS_TEST = False
-
-#Note that we just need to use this program ones.
-#Works to be done:
-    #i)  Test it
-    #ii) Write debugging prints
 
 def write_appropriate_pairs(threshold):
     """
@@ -242,7 +233,6 @@ def clean_rewrite_data():
         else:
             print("You are not a excel file dute.")
 
-
 def write_distributions(dist_names , params):
     """
     This function write distributions and their paramateres to excel file called "distribution_fit.xlsx"
@@ -302,11 +292,6 @@ def write_new_district_data(new_district_names , new_district_x_centers , new_di
     #Write the data into excel
     df.to_excel( "Yeni_MahalleVerileri.xlsx" , sheet_name = 'Sheet1' , index=False)
 
-def write_new_ids(new_id):
-    """
-    This function writes new_ids of district to txt file.
-    """
-    pass
 def run():
     """
     Look at the name of the function and guess its purpose..
@@ -315,4 +300,4 @@ def run():
     new_district_x_centers , new_district_y_centers = reader.util.calculate_centers_new_districts(lats , longs)
     new_district_names = reader.read_new_district_names("temp-attributes.xlsx")
     write_new_district_data(new_district_names , new_district_x_centers , new_district_y_centers)
-run()
+#run()

@@ -1,7 +1,6 @@
 """
 This module contains general utility functions for the entire program
 """
-
 #Open close debugging , testing
 IS_DEBUG = False
 IS_TEST = False
@@ -12,6 +11,7 @@ VIS_NUMBER_OF_DISTRICT = 975 #Number of district for visualization
 
 #General library imports
 import os
+from math import radians, cos, sin, asin, sqrt
 
 def get_current_directory():
     """
@@ -25,7 +25,6 @@ def get_current_directory():
     if IS_DEBUG == True:
         print("current directory is : " + dirpath)
     return dirpath
-
 
 def generate_appropriate_pairs(from_district , to_district , distance , threshold):
     """
@@ -137,7 +136,6 @@ def generate_availability_matrix(from_district , to_district , distance , thresh
         print("The number of rows in availability_matrix is " , len(availability_matrix))
         print("The number of columns in availability_matrix is " , len(availability_matrix[0]))
 
-
     pair_array = get_appropriate_pairs_da(from_district , to_district , distance , threshold)
 
     if IS_DEBUG == True:
@@ -163,7 +161,6 @@ def generate_risk_availability_matrix(from_districts , to_districts , distances 
         i) availability_matrix_risk : A list of list of list : A list , which contains direct values
     """
     risk_dict = { 'A' : 0 , 'B' : 1 ,  'C' : 2 , 'D' : 3}
-
 
     risk_availability_matrix = []
     temp_array = []
@@ -196,7 +193,6 @@ def generate_stochastic_availability_matrix(from_districts , to_districts , rand
 
     for i in range(NUMBER_OF_DISTRICT):
         stochastic_availability_matrix.append(list(temp_array))
-
 
     #Prepare available_array
     available_array = []
@@ -259,55 +255,6 @@ def generate_fixed_cost_array():
         fixed_cost_array.append(1)
     return fixed_cost_array
 
-def get_rid_of_turkish_characters(new_district_names):
-    """
-    """
-    new_names = []
-    TURKISH_CHARACTERS = [ "Ç" , "Ğ" , "İ" , "Ö" , "Ş" , "Ü"]
-    REPLACEMENTS = ["C" , "G" , "I" , "O" , "S" , "U"]
-    for i in range(len(new_district_names)):
-        current_word = new_district_names[i]
-        new_string = ""
-        for j in range(len(current_word)):
-            if current_word[j] in TURKISH_CHARACTERS :
-                index = TURKISH_CHARACTERS.index(current_word[j])
-                new_string += REPLACEMENTS[index]
-            else:
-                new_string += current_word[j]
-        new_names.append(new_string)
-
-    return new_names
-
-def get_in_old_not_in_new(old_district_names , new_district_names):
-    """
-    """
-    list_A = []
-    for element in old_district_names :
-        if element not in new_district_names:
-            list_A.append(element)
-    return list_A
-
-def get_in_new_not_in_old(old_district_names , new_district_names):
-    """
-    """
-    list_B = []
-    for element in new_district_names :
-        if element not in old_district_names:
-            list_B.append(element)
-    return list_B
-def get_new_ids(old_district_names , new_district_names):
-    """
-    """
-    new_ids = []
-    for i in range(len(old_district_names)) :
-        current_district_name = old_district_names[i]
-        if current_district_name in new_district_names :
-            index = new_district_names.index(current_district_name)
-            new_ids.append(index)
-        else:
-            print(old_district_names[i] , i)
-    return new_ids
-
 def calculate_centers_new_districts(lats , longs):
     """
     This function calculates centers of new districts using polygon coordinates
@@ -331,3 +278,18 @@ def calculate_centers_new_districts(lats , longs):
         y_coordinates.append(center_y)
 
     return x_coordinates , y_coordinates
+
+def calculate_distance_between_two_district(x_coord1 , y_coord1 , x_coord2 , y_coord2):
+    """
+    This function calculates the distances between (x1 , y1) and (x2 , y2) with unit meter.
+    """
+    # convert decimal degrees to radians
+    x_coord1 , y_coord1 , x_coord2 , y_coord2 = map(radians, [x_coord1, y_coord1, x_coord2, y_coord2])
+    # haversine formula
+    dlon = abs(x_coord2 - x_coord1)
+    dlat = abs(y_coord2 - y_coord1)
+    a = sin(dlat/2)**2 + cos(y_coord1) * cos(y_coord2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    # Radius of earth in kilometers is 6371
+    meter = 6371* c * 1000
+    return meter
