@@ -2,9 +2,6 @@
 This program creates necessary gui for the decision support system.It based on the native library of python tkinter
 Gui is designed in object oriented style.
 """
-#Works to be done:
-# i) Add threshold as an user entry to gui
-# ii) Edit radiobutton in a way that only one of them can be selected
 
 #General library imports
 import tkinter as tk
@@ -19,19 +16,6 @@ import map
 #Define height and width as constants
 HEIGHT = 400
 WIDTH = 415
-
-def check_solver(file_name):
-    """
-    This function checks whether there exists a file_name.txt or not
-    """
-
-    current_directory = solver.writer.reader.util.get_current_directory()
-    full_path = current_directory + "/Solutions/" + file_name
-
-    if os.path.isfile(full_path) == True:
-        return True
-    else :
-        return False
 
 class MainApplication:
     def __init__(self , master):
@@ -223,22 +207,33 @@ class MainApplication:
         self.user_entry_box.insert(0 , filename)
 
 
-    def run_selected_solution(self):
+    def run_selected_solution(self , file_name):
         """
+        This function shows given solution , file_name.txt on the map.
+        It takes 1 argument :
+            i) file_name : A string, which represents name of the txt file that contains the solution
+        It returns nothing.
         """
-        file_name = self.user_entry_box.get()
         solution_array = solver.writer.reader.read_selected_solution(file_name)
         print("Solution array is read")
         name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
         map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances)
 
-    def run_map(self):
-        """
-        Run the map with given user choices
-        """
 
-        #Get threshold and selected model number
-        choice = self.radio_button_var.get()
+    def get_user_entries(self , choice):
+        """
+        This function get user entries.
+        It takes 1 argument:
+            i) choice              : An integer , which represents the model choice of the user
+        It returns 5 variables:
+            i) threshold           : An integer , which represents the max possible distance(m) between two district
+            ii) is_stochastis      : A boolean  , which represents whether the chosen model is stochastic or not.
+            iii) min_threshold     : An integer , which represents the max possible travel time(min) between two districts
+            iv) facility_number    : An integer , which represents possible maximum facilities user allowed to open
+            v) confidence_interval : An integer , which represents confidence_interval of stochastic model
+
+        NOTE : For more details about these variable appropriate ranges check out input_check function
+        """
         if choice <= 3:
             confidence_interval = 0
             is_stochastis = False
@@ -258,80 +253,133 @@ class MainApplication:
             else :
                 facility_number = int(self.user_facility_entry.get())
 
+        return threshold , is_stochastis , min_threshold , facility_number , confidence_interval
 
-        #Prepare needed variables
-        name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
-        risks = solver.writer.reader.read_risk()
-        print("District file is read")
-
+    def get_appropriate_available_matrix(self,choice):
+        """
+        This function creates appropriate availability_matrix according to user's choice.
+        It takes 1 argument :
+            i) choice              : An integer     , which represents user's model choice
+        It returns 1 argument :
+            i) availability_matrix : A list of list , which consists of binary values that represents whether a particular district covers another particular district or not
+        """
         if choice == 1 or choice == 2 or choice == 3 :
             availability_matrix = solver.writer.reader.util.generate_availability_matrix(from_districts , to_districts , distances , threshold)
             print("Availability_Matrix is created")
 
         elif choice == 4 or choice == 5:
             random_numbers = solver.writer.reader.read_generated_numbers()
-            stochastic_availability_matrix = solver.writer.reader.util.generate_stochastic_availability_matrix(from_districts , to_districts , random_numbers , min_threshold , distances , confidence_interval)
+            availability_matrix = solver.writer.reader.util.generate_stochastic_availability_matrix(from_districts , to_districts , random_numbers , min_threshold , distances , confidence_interval)
             print("Stochastic matrix is created")
-        #Create fixed_cost
-        fixed_cost = solver.writer.reader.util.generate_fixed_cost_array()
-        print("Fixed_cost is created")
 
-        #Create or use dat file
-        if choice == 1 or choice == 2  :
-                if choice != 2:
-                    solver.writer.write_dat(availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval)
-                    print(".dat file is created")
-                elif choice == 2:
-                    risk_indicator = solver.writer.reader.util.generate_risk_indicator(risks)
-                    risk_array = solver.writer.reader.util.generate_risk_array()
-                    solver.writer.write_multi_dat(availability_matrix , risk_indicator , risk_array ,  fixed_cost , threshold)
+        return availability_matrix
 
-                if check_solver(self.dat_file_name + "Sol" + str(threshold) + ".txt") == False:
-                    file_name = solver.run(choice , threshold , confidence_interval , facility_number , min_threshold)
-                    print("Solver solved and txt is created.")
-                else:
-                    print("We have already a solution array.")
-        elif choice == 3 :
-
+    def write_appropriate_dat_file(self , choice , availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval , risk_indicator , risk_array , min_threshold):
+        """
+        This function writes appropriate_dat file according to user's choice.
+        It takes 1 argument :
+            i) choice : An integer , which represents user's model choice
+        It returns nothing.
+        """
+        if choice == 1:
             solver.writer.write_dat(availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval)
             print(".dat file is created")
-            if check_solver(self.dat_file_name + "Sol" + str(threshold) + "_" + str(facility_number) + ".txt") == False:
-                file_name = solver.run(choice , threshold , confidence_interval , facility_number , min_threshold)
-                print("Solver solved and txt is created.")
-            else:
-                print("We have already a solution array.")
-
+        elif choice == 2:
+            solver.writer.write_multi_dat(availability_matrix , risk_indicator , risk_array ,  fixed_cost , threshold)
+            print(".dat file is created")
+        elif choice == 3 :
+            solver.writer.write_dat(availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval)
+            print(".dat file is created")
         elif choice == 4 :
-            check_dat_file(self.dat_file_name + str(min_threshold) + "_" + str(confidence_interval) +  ".dat") == False
-            solver.writer.write_dat(stochastic_availability_matrix , fixed_cost , min_threshold , facility_number , is_stochastis , confidence_interval)
+            solver.writer.write_dat(availability_matrix , fixed_cost , min_threshold , facility_number , is_stochastis , confidence_interval)
             print(".dat file is created")
-            if check_solver(self.dat_file_name + "Sol" + str(min_threshold) + "_" + str(confidence_interval) +  ".txt") == False:
-                file_name = solver.run(choice , threshold , confidence_interval , facility_number , min_threshold)
-                print("Solver solved and txt is created.")
-            else:
-                print("We have already a solution array.")
-
         elif choice == 5:
-            check_dat_file(self.dat_file_name + str(threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) + ".dat") == False
-            solver.writer.write_dat(stochastic_availability_matrix , fixed_cost , min_threshold , facility_number , is_stochastis , confidence_interval)
+            solver.writer.write_dat(availability_matrix , fixed_cost , min_threshold , facility_number , is_stochastis , confidence_interval)
             print(".dat file is created")
-            if check_solver(self.dat_file_name + "Sol" + str(min_threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) +  ".txt") == False:
-                file_name = solver.run(choice , threshold , confidence_interval , facility_number , min_threshold)
-                print("Solver solved and txt is created.")
-            else:
-                print("We have already a solution array.")
 
-        solution_array = solver.writer.reader.read_cloud_solution(file_name)
-        print("Solution array is read")
-        map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances)
+    def generate_solution_filename(self , choice , threshold , is_stochastis , min_threshold , facility_number , confidence_interval):
+        """
+        This function generate appropriate solution file_name and returns it.
+        It takes 6 arguments:
+            i)  choice              : An integer , which represents user's model choice
+            ii) threshold           : An integer , which represents the max possible distance(m) between two district
+            iii) is_stochastis      : A boolean  , which represents whether the chosen model is stochastic or not.
+            iv) min_threshold       : An integer , which represents the max possible travel time(min) between two districts
+            v) facility_number      : An integer , which represents possible maximum facilities user allowed to open
+            vi) confidence_interval : An integer , which represents confidence_interval of stochastic model
+        It returns 1 variable:
+            i) file_name            : A string   , which represents the name of the file that contains solutions according to user's choice.
+        """
+        if choice == 1:
+            file_name = self.dat_file_name + "Sol" + str(threshold) + ".txt"
+        elif choice == 2:
+            file_name = self.dat_file_name + "Sol" + str(threshold) + "_" + str(facility_number) + ".txt"
+        elif choice == 3:
+            file_name = self.dat_file_name + "Sol" + str(threshold) + ".txt"
+        elif choice == 4:
+            file_name = self.dat_file_name + "Sol" + str(min_threshold) + "_" + str(confidence_interval) +  ".txt"
+        elif choice == 5:
+            file_name = self.dat_file_name + "Sol" + str(min_threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) +  ".txt"
 
+        return file_name
 
-        ## TODO: Input chech
-        #map.run()
+    def check_solver(self , file_name):
+        """
+        This function checks whether there exists a file_name.txt or not
+        It takes 6 arguments:
+            i) file_name : A string , which represents the name of the file that contains solutions according to user's choice.
+        It returns a boolean which is represents whether there file_name.txt exists or not
+        """
+        current_directory = solver.writer.reader.util.get_current_directory()
+        full_path = current_directory + "/Solutions/" + file_name
 
-        #if self.check_validity_threshold() == False :
-        #    messagebox.showerror("Wrong type!" , "Please enter an integer value.")
-        #       self.user_threshold_entry.delete(0 , len(self.user_threshold_entry.get()))
+        if os.path.isfile(full_path) == True:
+            return True
+        else :
+            return False
+
+    def run_map(self):
+        """
+        Run the map with given user choices.
+        It takes no arguments.
+        It returns nothing.
+        """
+
+        #Make an input check before running map
+        if self.input_check() == False:
+
+        else:
+            #Prepare thresholds , facility_numer , confidence_interval etc.
+            choice = self.radio_button_var.get()
+            threshold , is_stochastis , min_threshold , facility_number , confidence_interval = self.get_user_entries(choice)
+
+            #Generate file name of the solution file
+            file_name = self.generate_solution_filename(choice , threshold , is_stochastis , min_threshold , facility_number , confidence_interval)
+
+            #Check whether solution exists or not
+            if self.check_solver(file_name) == True:
+                self.run_selected_solution(file_name)
+            else :
+                #Prepare District data
+                name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
+                risks = solver.writer.reader.read_risk()
+                risk_indicator = solver.writer.reader.util.generate_risk_indicator(risks)
+                risk_array = solver.writer.reader.util.generate_risk_array()
+                print("District file is read")
+
+                #Get availability_matrix , it can be stochastic as well
+                availability_matrix = self.get_appropriate_available_matrix(choice)
+
+                #Create fixed_cost
+                fixed_cost = solver.writer.reader.util.generate_fixed_cost_array()
+                print("Fixed_cost is created")
+
+                #Get .dat file
+                self.write_appropriate_dat_file(choice , availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval , risk_indicator , risk_array , min_threshold)
+                solver.run(choice , threshold , confidence_interval , facility_number , min_threshold)
+                solution_array = solver.writer.reader.read_cloud_solution(file_name)
+                print("Solution array is read")
+                map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances)
 
 def main():
     root = tk.Tk()
@@ -340,38 +388,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-def check_validity_threshold(user_threshold_entry):
-    """
-    This function checks validity of the user's threshold
-    """
-    if type(user_threshold_entry.get()) != type(5) :
-        return False
-
-    return True
-
-def select_threshold(user_threshold_entry):
-    """
-    This function selects a threshold and check whether corresponding availability_matrix exists or not.
-       i)  If it exists then , use this excel filename
-       ii) If not , create the corresponding excel file and use it.
-    """
-
-    #Check whether the entry is integer or Note
-    if check_validity_threshold(user_threshold_entry) == False:
-        pass
-
-    filename = "availability_matrix_" + user_threshold_entry.get() + "xlsx"
-    file_path =  os.path(filename)
-
-    # If the file is already exists use it.Otherwise , create it
-    if os.path.exists(file_path) == True :
-        pass
-    else :
-        writer.run()
-def select_file():
-    """
-    When the select button is pressed this function is invoked.It is responsible for finalizing the file to load the file.
-    """
-    pass
