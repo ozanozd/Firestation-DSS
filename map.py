@@ -105,12 +105,3 @@ def draw_map(name):
     webbrowser.open(url)
     print("Sey oldu bisiy oldu baska bisiy oldu.")
 #run()
-"""
-gmap.marker(lng = 28.524177 , lat = 41.226523 ,title= "ORCUNLU" , color = COLOR_ARRAY[2])
-gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
-gmap.draw("last_map.html")
-path = os.path.abspath("last_map.html")
-url = "file://" + path
-webbrowser.open(url)
-print("Sey oldu bisiy oldu baska bisiy oldu.")
-"""

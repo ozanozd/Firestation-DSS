@@ -207,6 +207,7 @@ class MainApplication:
         filename = askopenfilename()
         self.user_entry_box.insert(0 , filename)
         self.solution_file_name = self.user_entry_box.get()
+        self.active_user_threshold_entry()
 
     def run_selected_solution(self):
         """
@@ -215,10 +216,11 @@ class MainApplication:
             i) file_name : A string, which represents name of the txt file that contains the solution
         It returns nothing.
         """
-        solution_array = solver.writer.reader.read_selected_solution(self.user_entry_box.get())
-        print("Solution array is read")
-        name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
-        map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances , int(self.user_threshold_entry.get()))
+        if self.threshold_check() == True:
+            solution_array = solver.writer.reader.read_selected_solution(self.user_entry_box.get())
+            print("Solution array is read")
+            name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
+            map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances , int(self.user_threshold_entry.get()) , solver.writer.reader.util.generate_map_name() + ".html")
 
 
     def get_user_entries(self , choice):

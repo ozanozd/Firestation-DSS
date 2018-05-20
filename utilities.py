@@ -12,6 +12,8 @@ VIS_NUMBER_OF_DISTRICT = 975 #Number of district for visualization
 #General library imports
 import os
 from math import radians, cos, sin, asin, sqrt
+import random
+import string
 
 def get_current_directory():
     """
@@ -333,3 +335,9 @@ def find_minimum_distance_cover(solution_array , old_x_coordinates , old_y_coord
         min_cover_array.append(min_index)
 
     return min_cover_array
+
+def generate_map_name():
+    """
+    This function generates random map name
+    """
+    return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
