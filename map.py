@@ -15,21 +15,21 @@ import read_file as reader
 #Create the map as a global variable
 gmap = gmplot.GoogleMapPlotter(41.015137, 28.979530 , 10)
 
-COLOR_ARRAY = [ "aliceblue" , "antiquewhite" , "aqua" , "aquamarine" , "azure" , "beige" , "bisque" ,  "black" , "blanchedalmond" , "blue" , "blueviolet" ,
+COLOR_ARRAY = [ "aqua" , "aquamarine" , "azure" , "beige" , "bisque" ,  "black" , "blanchedalmond" , "blue" , "blueviolet"                                ,
                 "brown" , "burlywood" , "cadetblue" , "chartreuse" , "chocolate" , "coral" , "cornflowerblue" , "cornsilk" , "crimson" , "cyan"           ,
                 "darkblue" , "darkcyan" , "darkgoldenrod" , "darkgray" , "darkgreen" , "darkkhaki" , "darkmagenta" , "darkolivegreen" , "darkorange"      ,
-                "darkorchid" ,  "darkred" , "darksalmon" , "darkseagreen" , "darkslateblue" , "darkslategray" , "darkturquoise" , "darkviolet"            ,
-                "deepskyblue" , "dimgray" , "dodgerblue" , "firebrick" , "floralwhite" , "forestgreen" , "fuchsia" , "gainsboro" , "ghostwhite"           ,
-                "gold" , "goldenrod" , "gray" , "green" , "greenyellow" , "honeydew" , "hotpink" , "indianred" , "indigo" , "ivory" , "khaki"             ,
+                "darkorchid" , "darksalmon" , "darkseagreen" , "darkslateblue" , "darkslategray" , "darkturquoise" , "darkviolet"                         ,
+                "deepskyblue" , "dimgray" , "dodgerblue" , "firebrick" , "forestgreen" , "fuchsia" , "gainsboro"                                          ,
+                "gold" , "goldenrod" , "gray" , "green" , "greenyellow" , "honeydew" , "hotpink" , "indigo" , "ivory" , "khaki"                           ,
                 "lavenderblush" , "lawngreen" , "lemonchiffon" , "lightblue" , "lightcoral" , "lightcyan" , "lightgoldenrodyellow" , "lightgray"          ,
                 "lightgreen" , "lightpink" , "lightsalmon" , "lightseagreen" , "lightskyblue" , "lightslategray" , "lightsteelblue" , "lightyellow"       ,
                 "lime" , "limegreen" , "linen" , "magenta" , "maroon" , "mediumaquamarine" , "mediumblue" , "mediumorchid" , "mediumpurple"               ,
-                "mediumseagreen" , "mediumslateblue" , "mediumspringgreen" , "mediumturquoise" , "mediumvioletred" , "midnightblue" , "mintcream"         ,
-                "mistyrose" , "moccasin" , "navajowhite" , "navy" , "oldlace" , "olive" , "olivedrab" , "orange" , "orangered" , "orchid"                 ,
-                "palegoldenrod" , "palegreen" , "paleturquoise" , "palevioletred" , "papayawhip" , "peachpuff" , "peru" , "pink" , "plum" , "powderblue"  ,
+                "mediumseagreen" , "mediumslateblue" , "mediumspringgreen" , "mediumturquoise" , "midnightblue" , "mintcream"                             ,
+                "mistyrose" , "moccasin" , "navy" , "oldlace" , "olive" , "olivedrab" , "orange" , "orchid"                                               ,
+                "palegoldenrod" , "palegreen" , "paleturquoise"  , "papayawhip" , "peachpuff" , "peru" , "pink" , "plum" , "powderblue"                   ,
                 "purple" , "rosybrown" , "royalblue" , "saddlebrown" , "salmon" , "sandybrown" , "seagreen" , "seashell" , "sienna" , "silver"            ,
                 "skyblue" , "slateblue" , "slategray" , "snow" , "springgreen" , "steelblue" , "tan" , "teal" , "thistle" , "tomato" , "turquoise"        ,
-                "violet" , "wheat" , "white" , "whitesmoke" , "yellow" , "yellowgreen"]
+                "violet" , "wheat" , "yellow" , "yellowgreen"]
 
 def add_marker(x_coordinates , y_coordinates , name_of_districts , solution_array):
     """
@@ -41,22 +41,22 @@ def add_marker(x_coordinates , y_coordinates , name_of_districts , solution_arra
     iv)  solution_array    : A list , whose length is NUMBER_OF_DISTRICT it contains binary values if ith element of it is 1 then we will open a fire station at ith district
     It returns nothing
     """
-    color_array = []
+    colors = []
     color_index = 0
     for i in range(reader.util.NUMBER_OF_DISTRICT):
         #If the ith distict has a fire station add marker to it
         if solution_array[i] == 1:
             gmap.marker(lat = y_coordinates[i] , lng = x_coordinates[i] , color = COLOR_ARRAY[color_index] , title = name_of_districts[i])
-            color_index += 1
             if color_index == len(COLOR_ARRAY) :
                 color_index = color_index % len(COLOR_ARRAY)
-            color_array.append(COLOR_ARRAY[color_index])
+            colors.append(COLOR_ARRAY[color_index])
+            color_index += 1
         else:
-            color_array.append("NONE")
+            colors.append("NONE")
 
-    return color_array
+    return colors
 
-def add_polygon(lats , longs , solution_array , x_coordinates , y_coordinates , new_x_coordinates , new_y_coordinates , threshold , old_colors):
+def add_polygon(lats , longs , solution_array , old_colors , min_cover_array):
     """
     This function draw polygons with the same color of markers of district which covered them
     It takes 3 arguments:
@@ -71,41 +71,46 @@ def add_polygon(lats , longs , solution_array , x_coordinates , y_coordinates , 
     """
     new_colors = []
     covered = []
-    for i in range(reader.util.VIS_NUMBER_OF_DISTRICT):
-        covered.append(False)
-        new_colors.append(" ")
-
-    for i in range(len(solution_array)):
-        if solution_array[i] == 1 :
-            old_x = x_coordinates[i]
-            old_y = y_coordinates[i]
-            for k in range(len(new_x_coordinates)):
-                new_x = new_x_coordinates[k]
-                new_y = new_y_coordinates[k]
-                dist = reader.util.calculate_distance_between_two_district(old_x , old_y , new_x , new_y)
-                if dist < threshold:
-                    covered[k] = True
-                    new_colors[k] = old_colors[i]
-
-    for i in range(len(covered)):
-        if covered[i] == False:
-            new_colors[i] = "red"
+    for element in min_cover_array :
+        if element != -1 :
+            new_colors.append(old_colors[element])
+        else :
+            new_colors.append("red")
 
     for i in range(975):
         gmap.polygon(lats[i] , longs[i] , color = new_colors[i])
 
-def run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance , threshold):
+def run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distance , threshold , name_of_map):
     """
     This function runs the map and show the correspding html
     """
     old_color_array = add_marker(x_coordinates , y_coordinates , name_of_districts , solution_array)
     new_x_coordinates , new_y_coordinates = reader.read_new_district_xy()
+    min_cover_array = reader.util.find_minimum_distance_cover(solution_array , x_coordinates , y_coordinates , new_x_coordinates , new_y_coordinates , threshold)
     gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
     lats , longs = reader.polygon_coords("temp-nodes.xlsx")
-    add_polygon(lats , longs , solution_array , x_coordinates , y_coordinates , new_x_coordinates , new_y_coordinates , threshold , old_color_array)
-    gmap.draw("last_map.html")
-    path = os.path.abspath("last_map.html")
+    add_polygon(lats , longs , solution_array , old_color_array , min_cover_array)
+    gmap.draw("Maps/" + name_of_map)
+    path = os.path.abspath("Maps/" + name_of_map)
+    url = "file://" + path
+    webbrowser.open(url)
+    print("Sey oldu bisiy oldu baska bisiy oldu.")
+
+def draw_map(name):
+    """
+    This function draws the name.html
+    """
+    path = os.path.abspath("Maps/" + name)
     url = "file://" + path
     webbrowser.open(url)
     print("Sey oldu bisiy oldu baska bisiy oldu.")
 #run()
+"""
+gmap.marker(lng = 28.524177 , lat = 41.226523 ,title= "ORCUNLU" , color = COLOR_ARRAY[2])
+gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
+gmap.draw("last_map.html")
+path = os.path.abspath("last_map.html")
+url = "file://" + path
+webbrowser.open(url)
+print("Sey oldu bisiy oldu baska bisiy oldu.")
+"""

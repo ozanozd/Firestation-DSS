@@ -293,3 +293,43 @@ def calculate_distance_between_two_district(x_coord1 , y_coord1 , x_coord2 , y_c
     # Radius of earth in kilometers is 6371
     meter = 6371* c * 1000
     return meter
+
+def find_minimum_distance_cover(solution_array , old_x_coordinates , old_y_coordinates , new_x_coordinates , new_y_coordinates , threshold):
+    """
+    This function finds the minimum distance fire station that covers 975 districts.
+    It takes arguments:
+        i)   solution_array    : A list , whose length is NUMBER_OF_DISTRICT it contains binary values if ith element of it is 1 then we will open a fire station at ith district
+        ii)  old_x_coordinates : A list , which contains x_coordinates of old districts
+        iii) old_y_coordinates : A list , which contains y_coordinates of old districts
+        iv)  new_x_coordinates : A list , which contains x_coordinates of new districts
+        v)   new_y_coordinates : A list , which contains y_coordinates of new districts
+    """
+    covering_array = []
+    for i in range(975):
+        covering_array.append([])
+
+    for i in range(len(solution_array)):
+        if solution_array[i] == 1:
+            for k in range(975):
+                old_x = old_x_coordinates[i]
+                old_y = old_y_coordinates[i]
+                new_x = new_x_coordinates[k]
+                new_y = new_y_coordinates[k]
+                distance = calculate_distance_between_two_district(old_x , old_y , new_x , new_y)
+                if distance < threshold :
+                    covering_array[k].append([i , distance])
+
+
+    min_cover_array = []
+    for i in range(975):
+        min_distance = float("inf")
+        min_index = -1
+        for element in covering_array[i]:
+            index = element[0]
+            dist = element[1]
+            if dist < min_distance :
+                min_distance = dist
+                min_index = index
+        min_cover_array.append(min_index)
+
+    return min_cover_array

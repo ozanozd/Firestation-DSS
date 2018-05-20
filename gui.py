@@ -75,7 +75,8 @@ class MainApplication:
         self.runmap_button.place(x = 180 ,  y = 350)
         self.canvas.pack()
 
-        self.dat_file_name = ""
+        self.solution_file_name = ""
+        self.map_file_name = ""
 
 
     def clear_all_inputs(self):
@@ -151,7 +152,7 @@ class MainApplication:
         self.deactive_user_min_threshold_entry()
         self.deactive_user_confidence_entry()
         self.deactive_user_facility_entry()
-        self.dat_file_name = "BaseModel_"
+        self.solution_file_name = "BaseModel_"
         self.activate_run_map()
 
     def select_multi_coverage(self):
@@ -162,7 +163,7 @@ class MainApplication:
         self.deactive_user_min_threshold_entry()
         self.deactive_user_confidence_entry()
         self.deactive_user_facility_entry()
-        self.dat_file_name = "MultiCoverage_"
+        self.solution_file_name = "MultiCoverage_"
         self.activate_run_map()
 
     def select_maximum_coverage(self):
@@ -173,7 +174,7 @@ class MainApplication:
         self.deactive_user_min_threshold_entry()
         self.deactive_user_confidence_entry()
         self.active_user_facility_entry()
-        self.dat_file_name = "MaximumCoverage_"
+        self.solution_file_name = "MaxCoverage_"
         self.activate_run_map()
 
     def select_stochastic_coverage(self):
@@ -184,7 +185,7 @@ class MainApplication:
         self.active_user_min_threshold_entry()
         self.deactive_user_facility_entry()
         self.active_user_confidence_entry()
-        self.dat_file_name = "Stochastic_Coverage_"
+        self.solution_file_name = "Stochastic_Coverage_"
         self.activate_run_map()
 
     def select_stochastic_maximum_coverage(self):
@@ -195,7 +196,7 @@ class MainApplication:
         self.active_user_min_threshold_entry()
         self.active_user_facility_entry()
         self.active_user_confidence_entry()
-        self.dat_file_name = "Stochastic_Maximum_Coverage_"
+        self.solution_file_name = "Stochastic_MaxCoverage_"
         self.activate_run_map()
     def load_file(self):
         """
@@ -205,18 +206,19 @@ class MainApplication:
         """
         filename = askopenfilename()
         self.user_entry_box.insert(0 , filename)
+        self.solution_file_name = self.user_entry_box.get()
 
-    def run_selected_solution(self , file_name):
+    def run_selected_solution(self):
         """
         This function shows given solution , file_name.txt on the map.
         It takes 1 argument :
             i) file_name : A string, which represents name of the txt file that contains the solution
         It returns nothing.
         """
-        solution_array = solver.writer.reader.read_selected_solution(file_name)
+        solution_array = solver.writer.reader.read_selected_solution(self.user_entry_box.get())
         print("Solution array is read")
         name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
-        map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances)
+        map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances , int(self.user_threshold_entry.get()))
 
 
     def get_user_entries(self , choice):
@@ -310,27 +312,29 @@ class MainApplication:
             i) file_name            : A string   , which represents the name of the file that contains solutions according to user's choice.
         """
         if choice == 1:
-            file_name = self.dat_file_name + "Sol_" + str(threshold) + ".txt"
+            self.map_file_name = self.solution_file_name + "Sol_" + str(threshold) + ".html"
+            self.solution_file_name += "Sol_" + str(threshold) + ".txt"
         elif choice == 2:
-            file_name = self.dat_file_name + "Sol_" + str(threshold) + "_" + str(facility_number) + ".txt"
+            self.map_file_name = self.solution_file_name + "Sol_" + str(threshold) + ".html"
+            self.solution_file_name += "Sol_" + str(threshold) + ".txt"
         elif choice == 3:
-            file_name = self.dat_file_name + "Sol_" + str(threshold) + ".txt"
+            self.map_file_name = self.solution_file_name + "Sol_" + str(threshold) + "_" + str(facility_number) + ".html"
+            self.solution_file_name += "Sol_" + str(threshold) + "_" + str(facility_number) + ".txt"
         elif choice == 4:
-            file_name = self.dat_file_name + "Sol_" + str(min_threshold) + "_" + str(confidence_interval) +  ".txt"
+            self.map_file_name = self.solution_file_name + "Sol_" + str(min_threshold) + "_" + str(confidence_interval) +  ".html"
+            self.solution_file_name += "Sol_" + str(min_threshold) + "_" + str(confidence_interval) +  ".txt"
         elif choice == 5:
-            file_name = self.dat_file_name + "Sol_" + str(min_threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) +  ".txt"
+            self.map_file_name = self.solution_file_name + "Sol_" + str(min_threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) +  ".html"
+            self.solution_file_name += "Sol_" + str(min_threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) +  ".txt"
 
-        return file_name
-
-    def check_solver(self , file_name):
+    def check_map(self):
         """
         This function checks whether there exists a file_name.txt or not
-        It takes 6 arguments:
-            i) file_name : A string , which represents the name of the file that contains solutions according to user's choice.
+        It takes no arguments:
         It returns a boolean which represents whether there file_name.txt exists or not
         """
         current_directory = solver.writer.reader.util.get_current_directory()
-        full_path = current_directory + "/Solutions/" + file_name
+        full_path = current_directory + "/Maps/" + self.map_file_name
 
         if os.path.isfile(full_path) == True:
             return True
@@ -446,12 +450,11 @@ class MainApplication:
             threshold , is_stochastis , min_threshold , facility_number , confidence_interval = self.get_user_entries(choice)
 
             #Generate file name of the solution file
-            file_name = self.generate_solution_filename(choice , threshold , is_stochastis , min_threshold , facility_number , confidence_interval)
+            self.generate_solution_filename(choice , threshold , is_stochastis , min_threshold , facility_number , confidence_interval)
 
-            #Check whether solution exists or not
-            if self.check_solver(file_name) == True:
-                self.run_selected_solution(file_name)
-            else :
+            if self.check_map() == True:
+                map.draw_map(self.map_file_name)
+            else:
                 #Prepare District data
                 name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
                 risks = solver.writer.reader.read_risk()
@@ -470,9 +473,14 @@ class MainApplication:
                 #Get .dat file
                 self.write_appropriate_dat_file(choice , availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval , risk_indicator , risk_array , min_threshold)
                 solver.run(choice , threshold , confidence_interval , facility_number , min_threshold)
-                solution_array = solver.writer.reader.read_cloud_solution(file_name)
+                solution_array = solver.writer.reader.read_cloud_solution(self.solution_file_name)
                 print("Solution array is read")
-                map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances , threshold)
+                count = 0
+                for element in solution_array :
+                    if element == 1:
+                        count += 1
+                print(count)
+                map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances , threshold , self.map_file_name)
 
 def main():
     root = tk.Tk()
