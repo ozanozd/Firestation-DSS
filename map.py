@@ -47,10 +47,10 @@ def add_marker(x_coordinates , y_coordinates , name_of_districts , solution_arra
         #If the ith distict has a fire station add marker to it
         if solution_array[i] == 1:
             gmap.marker(lat = y_coordinates[i] , lng = x_coordinates[i] , color = COLOR_ARRAY[color_index] , title = name_of_districts[i])
-            if color_index == len(COLOR_ARRAY) :
-                color_index = color_index % len(COLOR_ARRAY)
             colors.append(COLOR_ARRAY[color_index])
             color_index += 1
+            if color_index == len(COLOR_ARRAY) :
+                color_index = color_index % len(COLOR_ARRAY)
         else:
             colors.append("NONE")
 

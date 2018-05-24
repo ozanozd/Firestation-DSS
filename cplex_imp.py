@@ -33,7 +33,7 @@ def run(choice , threshold , confidence_interval , facility_number , min_thresho
         return "Solutions/MaxCoverage_Sol_" + str(threshold) + "_" + str(facility_number) +  ".txt"
 
     if choice == 4:
-        resp = client.execute(input = [ "Mod_Files/BaseModel.mod",
+        resp = client.execute(input = [ "Mod_Files/StochasticCoverage.mod",
                                 "Mod_Files/Stochastic_Coverage_" + str(min_threshold) + "_" + str(confidence_interval) + ".dat"],
                                 output = "Solutions/Stochastic_Coverage_Sol_" + str(min_threshold) + "_" + str(confidence_interval) + ".txt")
 
@@ -46,3 +46,4 @@ def run(choice , threshold , confidence_interval , facility_number , min_thresho
 
         return "Solutions/Stochastic_MaxCoverage_Sol_" + str(min_threshold) + "_" + str(facility_number) + "_" + str(confidence_interval) + ".txt"
 print("Sey oldu bisiy oldu baska bisiy oldu.")
+run(4 , 7000 , 90 , 0 , 7000)

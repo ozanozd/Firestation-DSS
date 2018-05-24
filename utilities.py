@@ -182,6 +182,34 @@ def generate_risk_availability_matrix(from_districts , to_districts , distances 
 
     return risk_availability_matrix
 
+def generate_extremely_detailed_stochatic_matrix(from_districts , to_districts , random_numbers , threshold , distances , confidence_interval):
+    """
+    """
+    stochastic_availability_matrix = []
+    temp_array = []
+    temp_matrix = []
+    for i in range(100):
+        temp_array.append(0)
+
+    for i in range(NUMBER_OF_DISTRICT):
+        temp_matrix.append(list(temp_array))
+
+    for i in range(NUMBER_OF_DISTRICT):
+        stochastic_availability_matrix.append(list(temp_matrix))
+
+    appropriate_pairs = generate_appropriate_pairs(from_districts , to_districts , distances , 7000)
+
+    for  i in range(len(random_numbers)):
+        from_district = appropriate_pairs[i][0] - 1
+        to_district = appropriate_pairs[i][1] - 1
+        for k in range(len(random_numbers[i])):
+            if random_numbers[i][k] <= threshold:
+                stochastic_availability_matrix[from_district][to_district][k] = 1
+
+    return stochastic_availability_matrix
+
+
+
 def generate_stochastic_availability_matrix(from_districts , to_districts , random_numbers , threshold , distances , confidence_interval):
     """
     This function creates stochastic availability_matrix.

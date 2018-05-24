@@ -104,4 +104,4 @@ def run():
                 random_numbers[i].append(current_number)
     writer.write_generated_numbers(random_numbers , fixed_cost)
     print("Sey oldu bisiy oldu baska bisiy oldu")
-#run()
+run()

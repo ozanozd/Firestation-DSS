@@ -139,6 +139,53 @@ def write_dat(availability_matrix , fixed_cost , threshold , facility_number , i
                 file.write(",")
         file.write("];")
 
+
+def stochastic_dat(stochastic_availability_matrix , threshold ,  fixed_cost , facility_number , confidence_interval):
+    #Determine name of the file
+    if facility_number == 0 :
+        file = open("Mod_Files/Stochastic_Coverage_" + str(threshold) + "_" + str(confidence_interval) +  ".dat" , 'w')
+    else:
+        file = open("Mod_Files/Stochastic_MaxCoverage_" + str(threshold) +  "_" + str(facility_number) + "_" + str(confidence_interval) +  ".dat" , 'w')
+
+    #Write Num_Districts
+    file.write("Num_Districts = 867;\n")
+
+    #Write the facility_number
+    if facility_number > 0 :
+        file.write("facility_number= " + str(facility_number) + ";\n")
+
+    #Write the confidence_interval
+    file.write("c= " + str(confidence_interval) + ";\n")
+
+    #Write the stochastic_availability_matrix
+    file.write("a=[")
+    for k in range(len(stochastic_availability_matrix)):
+        file.write("[")
+        for i in range(len(stochastic_availability_matrix[k])):
+            file.write("[")
+            for j in range(100):
+                if j != 99:
+                    file.write(str(stochastic_availability_matrix[k][i][j]) + ",")
+                else:
+                    file.write(str(stochastic_availability_matrix[k][i][j]))
+            if i != len(stochastic_availability_matrix[k]) - 1 :
+                file.write("],")
+            else:
+                file.write("]")
+        if k != len(stochastic_availability_matrix) - 1:
+            file.write("]\n,")
+        else:
+            file.write("]];\n")
+
+
+    #Write f_cost where f does not stand for fenerbahce . It is "fixed"
+    if facility_number == 0:
+        file.write("f_cost=[")
+        for i in range(len(fixed_cost)):
+            file.write(str(fixed_cost[i]))
+            if i != len(fixed_cost) - 1:
+                file.write(",")
+        file.write("];")
 def write_multi_dat(availability_matrix , risk_indicator , risk_array ,  fixed_cost , threshold):
     """
     """
@@ -296,8 +343,11 @@ def run():
     """
     Look at the name of the function and guess its purpose..
     """
-    lats , longs = reader.polygon_coords("temp-nodes.xlsx")
-    new_district_x_centers , new_district_y_centers = reader.util.calculate_centers_new_districts(lats , longs)
-    new_district_names = reader.read_new_district_names("temp-attributes.xlsx")
-    write_new_district_data(new_district_names , new_district_x_centers , new_district_y_centers)
+    name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = reader.read_district_file()
+    random_numbers = reader.read_generated_numbers()
+    fixed_cost = reader.util.generate_fixed_cost_array()
+    stochastic_availability_matrix = reader.util.generate_extremely_detailed_stochatic_matrix(from_districts , to_districts , random_numbers , 7000 , distances , 90)
+    stochastic_dat(stochastic_availability_matrix , 7000 ,  fixed_cost , 0 , 90)
+    print("Sey oldu bisiy oldu baska bisiy oldu.")
+
 #run()
