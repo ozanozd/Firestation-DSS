@@ -450,9 +450,11 @@ class MainApplication:
         if self.input_check(choice) == True:
             #Prepare thresholds , facility_number , confidence_interval etc.
             threshold , is_stochastis , min_threshold , facility_number , confidence_interval = self.get_user_entries(choice)
+            print(threshold , is_stochastis  , min_threshold , facility_number , confidence_interval)
 
             #Generate file name of the solution file
             self.generate_solution_filename(choice , threshold , is_stochastis , min_threshold , facility_number , confidence_interval)
+            print(self.solution_file_name)
 
             if self.check_map() == True:
                 map.draw_map(self.map_file_name)
@@ -475,6 +477,7 @@ class MainApplication:
                 #Get .dat file
                 self.write_appropriate_dat_file(choice , availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval , risk_indicator , risk_array , min_threshold)
                 solver.run(choice , threshold , confidence_interval , facility_number , min_threshold)
+                print(self.solution_file_name)
                 solution_array = solver.writer.reader.read_cloud_solution(self.solution_file_name)
                 print("Solution array is read")
                 count = 0

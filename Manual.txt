@@ -1,0 +1,125 @@
+This txt file consist of the followings:
+	i) General Hierarchy of Program
+	ii) Known bugs
+	iii) Known caveats
+	iv) How to run it
+	v) Required libraries
+	vi) Possible extensions
+	
+
+i. General Hierarchy of Program and Folder Design
+
+Root of the Program   : gui.py        , which is responsible for graphical user interface of the program . The user can choose different optimization models from gui to show corresponding
+								        maps for them. It contains two main part:
+								
+									     1) cplex_imp.py 
+									     2) map.py        , which is responsible for showing the fire stations on the map according to the solution of the optimization problem
+
+Solver of the program : cplex_imp.py  , which is responsible for solving problems using cplex cloud.It contains one part:
+										 1) write_file.py
+										 
+
+Map of the program    : map.py        , which is responsible for showing the fire stations on the map according to the solution of the optimization problem.It contains one part:
+										 1) read_file.py
+										 
+Writer of the program : write_file.py , which is responsible for writing solutions , queries , random numbers etc.It contains one part:
+										 1) read_file.py
+										 
+Reader of the program : read_file.py  , which is responsible for reading district files , solutions , queries etc. It contains one part:
+										 1) utilities.py 
+										 
+Helper of the program : utilities.py  , which is responsible for general helper functions such as generating availability matrices , find the current directory , generate fixed cost etc.
+
+
+Appropriate_Pairs(Folder)   :  Contains appropriate pair written in  excel for given threshold. It has 2 columns inside:
+								1) from_district : first district in the appropriate pair 
+								2) to_district   : second district in the appropriate pair
+
+Availability Matrix(Folder) :  Contains availability matrixx written in excel for given threshold. It contains 867*867 binary valued matrix its (i,k) entry is one if (i,k)
+							   district pair is in the appropriate pairs , in other words the distance between them is less than given threshold.
+							  
+Coords(Folder)              :  Contains polygon coordinates of 975 districts written in excel , for more information checkout the file.
+
+
+Data_Points(Folder)         :  Contains query results written in excel. It has 3 columns inside:
+								1) from_district : first district in the appropriate pair 
+								2) to_district   : second district in the appropriate pair
+								3) minutes       : traveling time in terms of minutes between from_district and to_district such as 8 mins
+								
+
+Maps(Folder)                :  Contains maps of the already solved optimization problem instances in .html format.Checkout the file for more details.
+
+Mod_Files(Folder)           :  Contains .dat and .mod files for optimization problems
+
+New_Data_Points             :  Contains query results written in excel. It has 3 columns inside:
+								1) from_district : first district in the appropriate pair 
+								2) to_district   : second district in the appropriate pair
+								3) int_minutes   : traveling time in terms of minutes between from_district and to_district such as 8 
+
+Solutions(Folder)           :  Contains solutions of already solved optimization problem instances in .txt format.Checkout the file for more details.		
+
+						
+Program also consists of 2 seperate parts :
+	1) google_query.py , which is responsible for finding travel time between two districts whose distance between them is less than given threshold , 7000m in our case,
+						 using google_maps API. It is seperate from other parts of the program since its duty was finished when we collected enough data
+	
+	2) statistic.py    , which is responsible for finding appropriate distributions for each district pair . Moreover , it generates random numbers from fitted distributions.
+						 It is seperate from other parts of the program since its duty was finished when we generated random numbers once.
+						 
+	
+ii) Known Bugs 
+
+This section contains information about known bugs of the program.
+
+1) The user should run only one optimization problem at each run of the program. In other words , after solving the problem user should close the program and restart again.
+   Otherwise , program will crash.
+2) There is no chech for cplex_cloud.In other words , if it does not return any solution for whatever reason then program will crash.
+
+NOTE : If you find any bugs please add it to here or inform the developers:)
+
+iii) Known caveats:
+
+This section contains information about known caveats of the program.In other words , it contains bad design issues of the program they are fatal error , i.e they did not cause
+crash of the program but they make it harder to understand and change the code.
+
+1) There is no Problem class in the program , the problem and gui is combined in one class sort of which is very unfortunate but also hard to redesign :(
+2) In some sections of the program such as : google_query , statistic , writing dat files etc. due to obscure technical reasons the code is far from being natural it contains
+   very tricky parts which hard to explain.They should be changed , but again , it is hard to do it...
+3) There is no automated , detailed testing for the program. There should be one to solve the above issues much more easily and conveniently.
+4) Due to different data file , MahalleVerileri.xlsx and YeniMahalleVerileri.xlsx , there is some unnecessary computations in the map.py file.The main reason for it is 
+   the district data and polygon coordinate data are unrelated.
+5) Code style , comment style , doc string style is not same everywhere in the program.It should be changed...
+
+NOTE : Probably , certainly! ,  there are some unnecessary functions , badly written functions , untested functions , if you catch any of them because write it down 
+	   or inform the developers.
+	   
+iv) How to run it:
+
+This section contains commands for running the program.
+
+Go to the folder that contains the github clone of the program using command line with command "cd". Then write "py -3.4 gui.py" . 
+You are right you should have python -3.4 in your computer. 
+
+v) Required libraries:
+
+This section contains required libraries to run the program
+
+googlemaps
+pandas
+docplex
+docloud
+gmplot
+xlsxwriter
+scipy
+numpy
+
+NOTE : You should install the libraries using "pip install lib_name" command from command line
+
+vi) Possible extensions:
+
+This sections contains how to extend this program.
+
+1) More optimization model options can be added.
+2) Tests can be added
+3) Gui can be modernized
+4) The program can be faster , 20-30 percent is possible probably , maybe more:)
