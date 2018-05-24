@@ -85,9 +85,7 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
         else :
             results.append("0 mins")
             print("Problematic")
-        #else:
-        #    j += 1
-        #   gmaps = googlemaps.Client(key = API_KEYS[j])
+
         if i % 2400 == 0 :
             j += 1
             j = j % len(API_KEYS)
