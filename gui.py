@@ -275,8 +275,8 @@ class MainApplication:
             print("Availability_Matrix is created")
 
         elif choice == 4 or choice == 5:
-            random_numbers = solver.writer.reader.read_generated_numbers()
-            availability_matrix = solver.writer.reader.util.generate_stochastic_availability_matrix(from_districts , to_districts , random_numbers , min_threshold , distances , confidence_interval)
+            appropriate_pairs = solver.writer.reader.util.generate_appropriate_pairs(from_districts , to_districts , distances , threshold)
+            availability_matrix = solver.writer.reader.util.generate_stochastic_sparse_matrix(random_numbers , appropriate_pairs , min_threshold)
             print("Stochastic matrix is created")
 
         return availability_matrix
@@ -298,10 +298,10 @@ class MainApplication:
             solver.writer.write_dat(availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval)
             print(".dat file is created")
         elif choice == 4 :
-            solver.writer.write_dat(availability_matrix , fixed_cost , min_threshold , facility_number , is_stochastis , confidence_interval)
+            solver.writer.write_stochastic_dat(availability_matrix , fixed_cost ,  min_threshold , facility_number , is_stochastis , confidence_interval)
             print(".dat file is created")
         elif choice == 5:
-            solver.writer.write_dat(availability_matrix , fixed_cost , min_threshold , facility_number , is_stochastis , confidence_interval)
+            solver.writer.write_stochastic_dat(availability_matrix , fixed_cost , min_threshold , facility_number , is_stochastis , confidence_interval)
             print(".dat file is created")
 
     def generate_solution_filename(self , choice , threshold , is_stochastis , min_threshold , facility_number , confidence_interval):
@@ -454,11 +454,9 @@ class MainApplication:
         if self.input_check(choice) == True:
             #Prepare thresholds , facility_number , confidence_interval etc.
             threshold , is_stochastis , min_threshold , facility_number , confidence_interval = self.get_user_entries(choice)
-            print(threshold , is_stochastis  , min_threshold , facility_number , confidence_interval)
 
             #Generate file name of the solution file
             self.generate_solution_filename(choice , threshold , is_stochastis , min_threshold , facility_number , confidence_interval)
-            print(self.solution_file_name)
 
             if self.check_map() == True:
                 map.draw_map(self.map_file_name)
@@ -484,11 +482,6 @@ class MainApplication:
                 print(self.solution_file_name)
                 solution_array = solver.writer.reader.read_cloud_solution(self.solution_file_name)
                 print("Solution array is read")
-                count = 0
-                for element in solution_array :
-                    if element == 1:
-                        count += 1
-                print(count)
                 map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances , threshold , self.map_file_name)
 
 def main():

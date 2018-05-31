@@ -101,7 +101,7 @@ def write_availability_matrix_excel(availability_matrix , threshold):
         for k in range(reader.util.NUMBER_OF_DISTRICT) :
             worksheet.write(row + i , col + k  , availability_matrix[i][k])
 
-def write_dat(availability_matrix , fixed_cost , threshold , facility_number , is_stochastis , confidence_interval):
+def write_dat(availability_matrix , fixed_cost , threshold , facility_number , is_stochastic , confidence_interval):
     """
     This function creates .dat file for cplex_cloud.
     This function takes 2 arguments:
@@ -110,13 +110,13 @@ def write_dat(availability_matrix , fixed_cost , threshold , facility_number , i
     This function returns nothing.
     """
 
-    if facility_number == 0 and is_stochastis == False :
+    if facility_number == 0 and is_stochastic == False :
         file = open("Mod_Files/BaseModel_" + str(threshold) + ".dat" , 'w')
-    elif facility_number > 0 and is_stochastis == False :
+    elif facility_number > 0 and is_stochastic == False :
         file = open("Mod_Files/MaxCoverage_" + str(threshold) + "_" + str(facility_number) +  ".dat" , 'w')
-    elif facility_number == 0 and is_stochastis == True :
+    elif facility_number == 0 and is_stochastic == True :
         file = open("Mod_Files/Stochastic_Coverage_" + str(threshold) + "_" + str(confidence_interval) +  ".dat" , 'w')
-    elif facility_number > 0 and is_stochastis == True :
+    elif facility_number > 0 and is_stochastic == True :
         file = open("Mod_Files/Stochastic_MaxCoverage_" + str(threshold) +  "_" + str(facility_number) + "_" + str(confidence_interval) +  ".dat" , 'w')
     file.write("Num_Districts = 867;\n")
     if facility_number > 0:
@@ -140,7 +140,7 @@ def write_dat(availability_matrix , fixed_cost , threshold , facility_number , i
         file.write("];")
 
 
-def stochastic_dat(stochastic_availability_matrix , threshold ,  fixed_cost , facility_number , confidence_interval):
+def write_stochastic_dat(stochastic_availability_matrix , fixed_cost ,  threshold , facility_number , is_stochastic ,  confidence_interval):
     #Determine name of the file
     if facility_number == 0 :
         file = open("Mod_Files/Stochastic_Coverage_" + str(threshold) + "_" + str(confidence_interval) +  ".dat" , 'w')
@@ -152,32 +152,23 @@ def stochastic_dat(stochastic_availability_matrix , threshold ,  fixed_cost , fa
 
     #Write the facility_number
     if facility_number > 0 :
-        file.write("facility_number= " + str(facility_number) + ";\n")
+        file.write("p= " + str(facility_number) + ";\n")
 
     #Write the confidence_interval
     file.write("c= " + str(confidence_interval) + ";\n")
 
     #Write the stochastic_availability_matrix
-    file.write("a=[")
+    file.write("assign={")
     for k in range(len(stochastic_availability_matrix)):
-        file.write("[")
-        for i in range(len(stochastic_availability_matrix[k])):
-            file.write("[")
-            for j in range(100):
-                if j != 99:
-                    file.write(str(stochastic_availability_matrix[k][i][j]) + ",")
-                else:
-                    file.write(str(stochastic_availability_matrix[k][i][j]))
-            if i != len(stochastic_availability_matrix[k]) - 1 :
-                file.write("],")
-            else:
-                file.write("]")
-        if k != len(stochastic_availability_matrix) - 1:
-            file.write("]\n,")
+        file.write("<")
+        file.write(str(stochastic_availability_matrix[k][0]) + "," + str(stochastic_availability_matrix[k][1]) + "," + str(stochastic_availability_matrix[k][2]))
+        file.write(">")
+        if k == len(stochastic_availability_matrix) - 1:
+            file.write("};")
         else:
-            file.write("]];\n")
+            file.write(",")
 
-
+    file.write("\n")
     #Write f_cost where f does not stand for fenerbahce . It is "fixed"
     if facility_number == 0:
         file.write("f_cost=[")

@@ -446,13 +446,3 @@ def test():
     print("Length of pair_array is:" , len(pair_array))
 if IS_TEST == True:
     test()
-
-def run():
-    """
-    Run the application
-    """
-    name_of_distribution , parameters_of_distribution = read_distribution()
-    for i in range(5):
-        print(name_of_distribution[i] , parameters_of_distribution[i])
-#run()
-#read_generated_numbers()

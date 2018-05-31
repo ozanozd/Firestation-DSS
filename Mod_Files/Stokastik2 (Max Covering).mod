@@ -1,6 +1,7 @@
 //set
 int Num_Districts=...;
-int facility_number=...;
+float c=...;//confidence level
+int p=...; //number
 
 //ranges
 range from_range=1..Num_Districts;
@@ -8,24 +9,27 @@ range to_range= 1..Num_Districts;
 range scenario=1..100;
 
 //parameters
-float a [from_range][to_range][scenario]=...; //availability matrix
-float covered[to_range][scenario]=...;
-//float t[from_range][to_range][scenario]=...; //travel time from district i to district j under the scenario k
-//float d[scenario]=...; //threshold under the scenario k
+tuple Pairs {
+int d1;
+int d2;
+int scenario;
+};
+setof(Pairs) assign = ...;
 
 // Decision Variables
 dvar boolean y[from_range]; //if there is a station to be opened, takes value 1 for an element of from_range, 0 otherwise
-// dvar boolean a [from_range][to_range][scenario]; Can be used for other method
+dvar boolean s[to_range][scenario]; // if the constraint can be satisfied 1, otherwise 0.
+dvar boolean z[to_range]; // if district j is covered.
 
 //Model
-maximize sum (j in to_range, k in scenario)covered[j][k];
+maximize sum (j in to_range)z[j];
 
 subject to {
 
-forall (j in to_range, k in scenario) sum(i in from_range) a[i][j][k]*y[i] >= covered[j][k]; //Each district is covered
+forall (j in to_range,k in scenario) sum(<i,j,k> in assign) y[i] >= s[j][k];
 
-sum (i in from_range) y[i] <= facility_number; //fixed number of facilities
+forall (j in to_range) sum(k in scenario) s[j][k] >= c*z[j];
 
-//forall[i in from_range, j in to_range, k in scenario) t[i][j][k]*a[i][j][k]<=d[k];
+sum (i in from_range) y[i]<=p;
 
 }

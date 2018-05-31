@@ -182,74 +182,22 @@ def generate_risk_availability_matrix(from_districts , to_districts , distances 
 
     return risk_availability_matrix
 
-def generate_extremely_detailed_stochatic_matrix(from_districts , to_districts , random_numbers , threshold , distances , confidence_interval):
-    """
-    """
-    stochastic_availability_matrix = []
-    temp_array = []
-    temp_matrix = []
-    for i in range(100):
-        temp_array.append(0)
+def generate_stochastic_sparse_matrix(random_numbers , appropriate_pairs , min_threshold):
 
-    for i in range(NUMBER_OF_DISTRICT):
-        temp_matrix.append(list(temp_array))
+    assign = []
+    for k in range(len(random_numbers)):
+        from_district = appropriate_pairs[k][0]
+        to_district = appropriate_pairs[k][1]
+        for i in range(len(random_numbers[k])):
+            if random_numbers[k][i] <= min_threshold :
+                assign.append([from_district , to_district , i + 1])
+                assign.append([to_district , from_district , i + 1])
 
-    for i in range(NUMBER_OF_DISTRICT):
-        stochastic_availability_matrix.append(list(temp_matrix))
+    for i in range(867):
+        for k in range(100):
+            assign.append([ i + 1 , i + 1 , k + 1])
 
-    appropriate_pairs = generate_appropriate_pairs(from_districts , to_districts , distances , 7000)
-
-    for  i in range(len(random_numbers)):
-        from_district = appropriate_pairs[i][0] - 1
-        to_district = appropriate_pairs[i][1] - 1
-        for k in range(len(random_numbers[i])):
-            if random_numbers[i][k] <= threshold:
-                stochastic_availability_matrix[from_district][to_district][k] = 1
-
-    return stochastic_availability_matrix
-
-
-
-def generate_stochastic_availability_matrix(from_districts , to_districts , random_numbers , threshold , distances , confidence_interval):
-    """
-    This function creates stochastic availability_matrix.
-    """
-
-    #Initialize stochastic_availability_matrix
-    stochastic_availability_matrix = []
-    temp_array = []
-    for i in range(NUMBER_OF_DISTRICT) :
-        temp_array.append(0)
-
-    for i in range(NUMBER_OF_DISTRICT):
-        stochastic_availability_matrix.append(list(temp_array))
-
-    #Prepare available_array
-    available_array = []
-    for i in range(len(random_numbers)):
-        score = 0
-        for element in random_numbers[i]:
-            if element <= threshold :
-                score += 1
-        if score >= confidence_interval :
-            available_array.append(1)
-        else :
-            available_array.append(0)
-
-    appropriate_pairs = generate_appropriate_pairs(from_districts , to_districts , distances , 7000)
-    #Make changes in the stochastic_availability_matrix
-    for i in range(len(appropriate_pairs)):
-        index1 = appropriate_pairs[i][0] - 1
-        index2 = appropriate_pairs[i][1] - 1
-        if available_array[i] == 1:
-            stochastic_availability_matrix[index1][index2] = 1
-            stochastic_availability_matrix[index2][index1] = 1
-
-    for i in range(NUMBER_OF_DISTRICT):
-        stochastic_availability_matrix[i][i] = 1
-
-    return stochastic_availability_matrix
-
+    return assign
 def generate_risk_indicator(risks):
     """
     This function is a function
