@@ -94,7 +94,6 @@ def run(solution_array , name_of_districts , x_coordinates , y_coordinates , fro
     path = os.path.abspath("Maps/" + name_of_map)
     url = "file://" + path
     webbrowser.open(url)
-    print("Sey oldu bisiy oldu baska bisiy oldu.")
 
 def draw_map(name):
     """
@@ -103,5 +102,4 @@ def draw_map(name):
     path = os.path.abspath("Maps/" + name)
     url = "file://" + path
     webbrowser.open(url)
-    print("Sey oldu bisiy oldu baska bisiy oldu.")
 #run()

@@ -146,6 +146,7 @@ class MainApplication:
 
     def select_base_model(self):
         """
+        This function selects base model activate and deactivate the buttons accordingly and prepare the solution file name
         """
         self.clear_all_inputs()
         self.active_user_threshold_entry()
@@ -157,6 +158,7 @@ class MainApplication:
 
     def select_multi_coverage(self):
         """
+        This function selects multi_coveragee model activate and deactivate the buttons accordingly and prepare the solution file name
         """
         self.clear_all_inputs()
         self.active_user_threshold_entry()
@@ -168,6 +170,7 @@ class MainApplication:
 
     def select_maximum_coverage(self):
         """
+        This function selects max_coverage model activate and deactivate the buttons accordingly and prepare the solution file name
         """
         self.clear_all_inputs()
         self.active_user_threshold_entry()
@@ -179,6 +182,7 @@ class MainApplication:
 
     def select_stochastic_coverage(self):
         """
+        This function selects stochastic_coverage model activate and deactivate the buttons accordingly and prepare the solution file name
         """
         self.clear_all_inputs()
         self.deactive_user_threshold_entry()
@@ -190,6 +194,7 @@ class MainApplication:
 
     def select_stochastic_maximum_coverage(self):
         """
+        This function selects stochastic_max_coverage model activate and deactivate the buttons accordingly and prepare the solution file name
         """
         self.clear_all_inputs()
         self.deactive_user_threshold_entry()
@@ -221,7 +226,6 @@ class MainApplication:
             print("Solution array is read")
             name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances = solver.writer.reader.read_district_file()
             map.run(solution_array , name_of_districts , x_coordinates , y_coordinates , from_districts , to_districts , distances , int(self.user_threshold_entry.get()) , solver.writer.reader.util.generate_map_name() + ".html")
-
 
     def get_user_entries(self , choice):
         """

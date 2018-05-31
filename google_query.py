@@ -1,14 +1,3 @@
-"""
-This program sends queries to google and get the answers.
-NOTE THAT : It just tests it , not writing answers to any document.
-"""
-
-IS_DEBUG = True
-
-#Work to be done: Find a way to handle the query quota.
-#Write answers to the document(txt or excel?)
-#x,y coordinates are not good for queries:(
-
 #General library imports
 import googlemaps
 from datetime import datetime
@@ -16,6 +5,8 @@ import pandas as pd
 
 #Inside project imports
 import write_file as writer
+
+IS_DEBUG = True
 
 #Define API_KEY as a constant
 API_KEYS = ['AIzaSyBGWTZbOAUijqF5J6SwhF-nYAEzxCljLgU' , 'AIzaSyDtJI-Yg2mnCKJjY_6uIxyxfFo9sZ7R-Ns' , 'AIzaSyAYi9kQkJWezjbvduxEq0wCg-IwkGa-23c',
@@ -99,10 +90,3 @@ def query_all_appropriate_pairs(appropriate_pairs , x_coordinates  , y_coordinat
 
             print("API key chagend from" , j - 1 , "to" , j  , ".")
     return results
-
-def run():
-    name_of_districts , x_coordinates , y_coordinates , from_district , to_district , distances = writer.reader.read_district_file()
-    appropriate_pairs = writer.reader.util.get_appropriate_pairs(from_district , to_district , distances , 7000)
-    results_array = query_all_appropriate_pairs(appropriate_pairs , x_coordinates , y_coordinates)
-    writer.write_query(appropriate_pairs , results_array)
-run()
